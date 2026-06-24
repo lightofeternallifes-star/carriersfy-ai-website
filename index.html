@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="translations.js"></script>
+<style>
+  *{box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;}
+  ::selection{background:rgba(28,127,214,0.4);color:#fff;}
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:#070B16;}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:8px;}
+  @keyframes cfspin{to{transform:rotate(360deg);}}
+  @keyframes cfspinr{to{transform:rotate(-360deg);}}
+  @keyframes cffloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
+  @keyframes cfpulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:.85;transform:scale(1.05);}}
+  @keyframes cfshimmer{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+  @keyframes cfblink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  @keyframes cfgrid{0%{transform:translateY(0);}100%{transform:translateY(60px);}}
+  @keyframes cfrise{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:none;}}
+  @keyframes cfflowR{0%{transform:translate(0,-50%);opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{transform:translate(50px,-50%);opacity:0;}}
+  @keyframes cfflowL{0%{transform:translate(0,-50%);opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{transform:translate(-50px,-50%);opacity:0;}}
+  @keyframes cfcore{0%,100%{opacity:.72;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06);}}
+  @keyframes cfglow{0%,100%{opacity:.65;}50%{opacity:1;}}
+  @keyframes cfbreath{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,46,60,.42)) drop-shadow(0 0 6px rgba(31,162,255,.38));}50%{transform:scale(1.06);filter:drop-shadow(0 0 17px rgba(255,46,60,.72)) drop-shadow(0 0 13px rgba(31,162,255,.66));}}
+  @keyframes cfbreathin{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5;}50%{transform:translate(-50%,-50%) scale(1.07);opacity:.72;}}
+  [data-reveal]{opacity:1;transform:none;}
+  [data-navlinks]{display:flex;}
+  [data-burger]{display:none;}
+  @media(max-width:880px){
+    [data-navlinks]{display:none;}
+    [data-burger]{display:flex;}
+    [data-navcta]{display:none;}
+  }
+  @media(max-width:760px){
+    [data-wf-label]{display:none !important;}
+  }
+  #cf-herogrid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1.12fr);gap:clamp(30px,4vw,64px);align-items:center;}
+  @media(max-width:920px){
+    #cf-herogrid{grid-template-columns:1fr;gap:8px;}
+    #cf-herostage{margin-top:8px;}
+  }
+</style>
+</helmet>
+<div style="background:#070B16;color:#F4F6FB;font-family:'Manrope',sans-serif;position:relative;overflow-x:hidden;min-height:100vh;">
+
+  <canvas id="cf-particles" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.6;"></canvas>
+  <!-- cinematic depth + lighting layers (fixed = subtle parallax as content scrolls over them) -->
+  <div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 720px at 78% -8%,rgba(28,127,214,0.26),transparent 60%),radial-gradient(900px 720px at 6% 12%,rgba(31,162,255,0.14),transparent 55%),radial-gradient(760px 520px at 50% 112%,rgba(255,46,60,0.16),transparent 60%);"></div>
+  <div style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:linear-gradient(rgba(120,150,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 78%);mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 78%);"></div>
+  <div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 130% 90% at 50% 45%,transparent 52%,rgba(0,0,0,.58) 100%);"></div>
+
+  <!-- NAV -->
+  <nav id="cf-nav" style="position:fixed;top:0;left:0;right:0;z-index:60;transition:all .4s ease;border-bottom:1px solid transparent;">
+    <div style="max-width:1280px;margin:0 auto;padding:18px clamp(20px,5vw,56px);display:flex;align-items:center;justify-content:space-between;gap:24px;">
+      <a href="#top" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;">
+        <img src="assets/carriersfy-emblem-core.png" alt="Carriersfy AI" style="height:48px;width:auto;display:block;transform-origin:center;animation:cfbreath 4.6s ease-in-out infinite;">
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;letter-spacing:.04em;">CARRIERSFY <span style="color:#FF2E3C;font-weight:700;">AI</span></span>
+      </a>
+      <div data-navlinks style="align-items:center;gap:34px;">
+        <a href="#platform" style="color:rgba(244,246,251,.62);text-decoration:none;font-size:14.5px;font-weight:500;">Platform</a>
+        <a href="#industries" style="color:rgba(244,246,251,.62);text-decoration:none;font-size:14.5px;font-weight:500;">Industries</a>
+        <a href="#cases" style="color:rgba(244,246,251,.62);text-decoration:none;font-size:14.5px;font-weight:500;">Case Studies</a>
+        <a href="#process" style="color:rgba(244,246,251,.62);text-decoration:none;font-size:14.5px;font-weight:500;">Process</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="position:relative;" id="cf-langwrap">
+          <button id="cf-langbtn" onClick="{{ toggleLang }}" aria-label="Language" style="display:flex;align-items:center;gap:7px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);color:#fff;font-weight:600;font-size:13px;cursor:pointer;"><span style="font-size:14px;">🌐</span><span id="cf-langlabel">EN</span><span style="font-size:9px;opacity:.7;">▼</span></button>
+          <div id="cf-langmenu" style="display:none;position:absolute;top:calc(100% + 10px);right:0;min-width:184px;background:rgba(9,13,24,.96);backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:7px;box-shadow:0 22px 56px rgba(0,0,0,.55);z-index:90;">
+            <button onClick="{{ setEn }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border-radius:10px;background:none;border:none;color:#fff;font-size:14px;cursor:pointer;text-align:left;"><span style="font-size:17px;">🇺🇸</span><b style="font-weight:700;width:22px;">EN</b><span style="color:rgba(244,246,251,.6);">English</span></button>
+            <button onClick="{{ setEs }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border-radius:10px;background:none;border:none;color:#fff;font-size:14px;cursor:pointer;text-align:left;"><span style="font-size:17px;">🇪🇸</span><b style="font-weight:700;width:22px;">ES</b><span style="color:rgba(244,246,251,.6);">Español</span></button>
+            <button onClick="{{ setPt }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border-radius:10px;background:none;border:none;color:#fff;font-size:14px;cursor:pointer;text-align:left;"><span style="font-size:17px;">🇧🇷</span><b style="font-weight:700;width:22px;">PT</b><span style="color:rgba(244,246,251,.6);">Português</span></button>
+          </div>
+        </div>
+        <a data-navcta href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:14px;padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 6px 24px rgba(28,127,214,.35);">Get Your AI Employee</a>
+        <button data-burger onClick="{{ toggleMenu }}" aria-label="Menu" style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+          <span style="width:16px;height:1.6px;background:#fff;display:block;"></span>
+          <span style="width:16px;height:1.6px;background:#fff;display:block;"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="cf-mobilemenu" style="position:fixed;inset:0;z-index:80;background:rgba(7,11,22,.92);backdrop-filter:blur(24px);display:none;flex-direction:column;padding:28px clamp(20px,5vw,56px);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;">
+      <span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;">CARRIERSFY AI</span>
+      <button onClick="{{ closeMenu }}" style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:22px;cursor:pointer;">×</button>
+    </div>
+    <a href="#platform" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Platform</a>
+    <a href="#industries" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Industries</a>
+    <a href="#cases" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Case Studies</a>
+    <a href="#process" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Process</a>
+    <a href="#contact" onClick="{{ closeMenu }}" style="margin-top:32px;text-align:center;text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);">Get Your AI Employee</a>
+  </div>
+
+  <!-- HERO -->
+  <header id="top" style="position:relative;z-index:1;overflow:hidden;min-height:100vh;display:flex;align-items:center;padding:clamp(120px,15vh,175px) clamp(20px,5vw,56px) clamp(48px,6vw,80px);">
+    <!-- SCENE BACKDROP (full-bleed cinematic environment) -->
+    <div style="position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1200px 820px at 70% 38%,rgba(22,46,98,.6),transparent 62%),radial-gradient(900px 700px at 50% 124%,rgba(9,18,46,.7),transparent 60%),#05070F;"></div>
+    <div style="position:absolute;top:-12%;right:-6%;width:72%;height:84%;z-index:0;pointer-events:none;background:radial-gradient(closest-side,rgba(255,46,60,.34),rgba(255,46,60,.08) 46%,transparent 72%);filter:blur(42px);transform:rotate(-18deg);mix-blend-mode:screen;animation:cfglow 9s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:-14%;left:40%;width:60%;height:74%;z-index:0;pointer-events:none;background:radial-gradient(closest-side,rgba(31,162,255,.36),rgba(28,127,214,.08) 50%,transparent 74%);filter:blur(48px);mix-blend-mode:screen;animation:cfglow 11s ease-in-out infinite reverse;"></div>
+    <div style="position:absolute;top:28%;left:-10%;width:42%;height:54%;z-index:0;pointer-events:none;background:radial-gradient(closest-side,rgba(60,120,255,.16),transparent 70%);filter:blur(42px);mix-blend-mode:screen;"></div>
+    <div style="position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(5,7,15,.55),transparent 20%,transparent 68%,rgba(5,7,15,.9));"></div>
+
+    <div id="cf-herogrid" style="position:relative;z-index:3;max-width:1320px;margin:0 auto;width:100%;">
+      <div>
+        <div data-reveal style="display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13px;font-weight:600;letter-spacing:.04em;color:rgba(244,246,251,.8);margin-bottom:28px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:#1FA2FF;box-shadow:0 0 12px #1FA2FF;animation:cfblink 2s infinite;"></span>
+          WHERE BUSINESS MEETS ARTIFICIAL INTELLIGENCE
+        </div>
+        <h1 data-reveal style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(44px,6.8vw,86px);line-height:0.99;letter-spacing:-.035em;margin:0 0 26px;text-wrap:balance;">
+          <span style="display:block;color:#F7F9FE;text-shadow:0 0 44px rgba(120,170,255,.22);">Your Next Best Employee Already Exists.</span>
+          <span style="display:block;background:linear-gradient(110deg,#3FB0FF,#1C7FD6 42%,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:cfshimmer 6s linear infinite;">It Runs on Artificial Intelligence.</span>
+        </h1>
+        <p data-reveal style="font-size:clamp(16.5px,1.55vw,20px);line-height:1.6;color:rgba(244,246,251,.66);max-width:584px;margin:0 0 40px;font-weight:400;">
+          Carriersfy AI designs and deploys digital employees that answer calls, serve customers, qualify leads, generate sales opportunities and work 24/7 for your business.
+        </p>
+        <div data-reveal style="display:flex;flex-wrap:wrap;gap:16px;">
+          <a href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:15.5px;padding:16px 30px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 10px 40px rgba(28,127,214,.4);transition:transform .35s ease,box-shadow .35s ease;display:inline-flex;align-items:center;gap:10px;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
+          <a href="#contact" style="text-decoration:none;color:#fff;font-weight:600;font-size:15.5px;padding:16px 30px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);transition:all .3s ease;" style-hover="background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.3);transform:translateY(-2px);">Book a Strategy Call</a>
+        </div>
+      </div>
+
+      <!-- HERO STAGE — Cinematic AI Workforce Command Center -->
+      <div id="cf-herostage" data-reveal style="position:relative;min-height:clamp(560px,64vw,720px);display:flex;align-items:center;justify-content:center;">
+
+        <!-- HUD frame brackets -->
+        <div style="position:absolute;top:0;left:1%;width:30px;height:30px;border-top:2px solid rgba(31,162,255,.45);border-left:2px solid rgba(31,162,255,.45);"></div>
+        <div style="position:absolute;top:0;right:1%;width:30px;height:30px;border-top:2px solid rgba(255,46,60,.45);border-right:2px solid rgba(255,46,60,.45);"></div>
+        <div style="position:absolute;bottom:0;left:1%;width:30px;height:30px;border-bottom:2px solid rgba(255,46,60,.45);border-left:2px solid rgba(255,46,60,.45);"></div>
+        <div style="position:absolute;bottom:0;right:1%;width:30px;height:30px;border-bottom:2px solid rgba(31,162,255,.45);border-right:2px solid rgba(31,162,255,.45);"></div>
+
+        <!-- core energy glow -->
+        <div style="position:absolute;left:50%;top:44%;width:min(600px,116%);height:min(600px,116%);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(190,230,255,.5),rgba(31,162,255,.2) 32%,rgba(28,127,214,.06) 54%,transparent 70%);filter:blur(6px);animation:cfcore 4s ease-in-out infinite;pointer-events:none;"></div>
+        <!-- red rim glow behind emblem -->
+        <div style="position:absolute;left:50%;top:24%;width:min(380px,76%);height:min(380px,76%);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,46,60,.34),transparent 60%);filter:blur(24px);animation:cfglow 5s ease-in-out infinite;pointer-events:none;"></div>
+
+        <!-- projector light beam -->
+        <div style="position:absolute;bottom:12%;left:50%;transform:translateX(-50%);width:54%;height:52%;background:linear-gradient(to top,rgba(31,162,255,.26),rgba(31,162,255,0) 78%);filter:blur(12px);clip-path:polygon(40% 100%,60% 100%,86% 0,14% 0);pointer-events:none;"></div>
+
+        <!-- tilted holographic platform -->
+        <div style="position:absolute;bottom:5%;left:50%;transform:translateX(-50%);width:min(540px,98%);height:210px;perspective:720px;pointer-events:none;">
+          <div style="position:absolute;inset:0;transform:rotateX(74deg);transform-origin:center 60%;">
+            <div style="position:absolute;left:50%;top:50%;width:96%;height:96%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(31,162,255,.34),rgba(28,127,214,.06) 58%,transparent 74%);"></div>
+            <div style="position:absolute;left:50%;top:50%;width:96%;height:96%;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(31,162,255,.55);box-shadow:0 0 34px rgba(31,162,255,.45);"></div>
+            <div style="position:absolute;left:50%;top:50%;width:70%;height:70%;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(255,46,60,.45);box-shadow:0 0 26px rgba(255,46,60,.4);"></div>
+            <div style="position:absolute;left:50%;top:50%;width:46%;height:46%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(170,215,255,.5);"></div>
+            <div style="position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed rgba(130,185,255,.4);animation:cfspin 16s linear infinite;"></div>
+          </div>
+        </div>
+
+        <!-- orbit rings + holographic sphere -->
+        <div style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(440px,86%);aspect-ratio:1;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;width:100%;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 0deg,#1FA2FF,#1C7FD6,#FF2E3C,#1FA2FF);filter:blur(58px);opacity:.32;animation:cfspin 22s linear infinite;"></div>
+          <div style="position:absolute;width:92%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(120,170,255,.18);animation:cfspin 30s linear infinite;"></div>
+          <div style="position:absolute;width:66%;aspect-ratio:1;border-radius:50%;border:1px dashed rgba(255,90,100,.22);animation:cfspinr 24s linear infinite;"></div>
+          <canvas id="cf-core" style="position:absolute;width:88%;aspect-ratio:1;"></canvas>
+          <!-- clean emblem powering Sofia from inside the globe (behind/above the label) -->
+          <img src="assets/carriersfy-emblem-core.png" alt="Carriersfy AI" style="position:absolute;left:50%;top:34%;width:54%;height:auto;z-index:2;pointer-events:none;filter:drop-shadow(0 0 30px rgba(255,46,60,.6)) drop-shadow(0 0 24px rgba(31,162,255,.6));animation:cfbreathin 5.5s ease-in-out infinite;">
+          <div style="position:absolute;text-align:center;z-index:3;pointer-events:none;">
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(22px,2.7vw,34px);letter-spacing:.06em;color:#EAF4FF;text-shadow:0 0 30px rgba(31,162,255,.7);">SOFIA AI</div>
+            <div style="font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:rgba(190,215,255,.82);margin-top:8px;">Digital Employee</div>
+            <div style="display:inline-flex;align-items:center;gap:7px;margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#35D6A0;"><span style="width:7px;height:7px;border-radius:50%;background:#35D6A0;box-shadow:0 0 10px #35D6A0;animation:cfblink 2s infinite;"></span>Online</div>
+          </div>
+        </div>
+
+        <!-- DATA CARD: Calls Answered (top-left) -->
+        <div style="position:absolute;top:9%;left:-3%;z-index:5;width:clamp(150px,15vw,184px);padding:15px 17px;background:linear-gradient(180deg,rgba(13,18,32,.9),rgba(8,11,20,.9));border:1px solid rgba(31,162,255,.32);border-radius:14px;backdrop-filter:blur(16px);box-shadow:0 20px 54px rgba(0,0,0,.55),0 0 26px rgba(31,162,255,.14);animation:cffloat 6.2s ease-in-out infinite;">
+          <div style="position:absolute;top:50%;left:100%;width:58px;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(31,162,255,.75),rgba(31,162,255,0));"><div style="position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:#9ED8FF;box-shadow:0 0 12px #1FA2FF;animation:cfflowR 2.4s linear infinite;"></div></div>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(185,212,255,.7);line-height:1.35;">Calls Answered</div>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(24px,2.6vw,30px);color:#fff;margin:7px 0 5px;">1,284</div>
+          <div style="font-size:11.5px;"><span style="color:#35D6A0;font-weight:700;">+34%</span> <span style="color:rgba(244,246,251,.5);">this week</span></div>
+        </div>
+
+        <!-- DATA CARD: Appointments Booked (lower-left) -->
+        <div style="position:absolute;bottom:19%;left:-3%;z-index:5;width:clamp(150px,15vw,184px);padding:15px 17px;background:linear-gradient(180deg,rgba(13,18,32,.9),rgba(8,11,20,.9));border:1px solid rgba(255,46,60,.3);border-radius:14px;backdrop-filter:blur(16px);box-shadow:0 20px 54px rgba(0,0,0,.55),0 0 26px rgba(255,46,60,.14);animation:cffloat 7.4s ease-in-out infinite;">
+          <div style="position:absolute;top:50%;left:100%;width:58px;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(255,46,60,.7),rgba(255,46,60,0));"><div style="position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:#FFB3B8;box-shadow:0 0 12px #FF2E3C;animation:cfflowR 2.8s linear infinite;"></div></div>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(185,212,255,.7);line-height:1.35;">Appointments Booked</div>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(24px,2.6vw,30px);color:#fff;margin:7px 0 5px;">347</div>
+          <div style="font-size:11.5px;"><span style="color:#35D6A0;font-weight:700;">+27%</span> <span style="color:rgba(244,246,251,.5);">this week</span></div>
+        </div>
+
+        <!-- DATA CARD: Leads Qualified (top-right) -->
+        <div style="position:absolute;top:16%;right:-3%;z-index:5;width:clamp(150px,15vw,184px);padding:15px 17px;background:linear-gradient(180deg,rgba(13,18,32,.9),rgba(8,11,20,.9));border:1px solid rgba(31,162,255,.32);border-radius:14px;backdrop-filter:blur(16px);box-shadow:0 20px 54px rgba(0,0,0,.55),0 0 26px rgba(31,162,255,.14);animation:cffloat 6.8s ease-in-out infinite;">
+          <div style="position:absolute;top:50%;right:100%;width:58px;height:2px;transform:translateY(-50%);background:linear-gradient(270deg,rgba(31,162,255,.75),rgba(31,162,255,0));"><div style="position:absolute;top:50%;right:0;width:9px;height:9px;border-radius:50%;background:#9ED8FF;box-shadow:0 0 12px #1FA2FF;animation:cfflowL 2.4s linear infinite;"></div></div>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(185,212,255,.7);line-height:1.35;">Leads Qualified</div>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(24px,2.6vw,30px);color:#fff;margin:7px 0 5px;">2,156</div>
+          <div style="font-size:11.5px;"><span style="color:#35D6A0;font-weight:700;">+42%</span> <span style="color:rgba(244,246,251,.5);">this week</span></div>
+        </div>
+
+        <!-- DATA CARD: Revenue Generated (lower-right) -->
+        <div style="position:absolute;bottom:11%;right:-3%;z-index:5;width:clamp(150px,15vw,184px);padding:15px 17px;background:linear-gradient(180deg,rgba(13,18,32,.9),rgba(8,11,20,.9));border:1px solid rgba(31,162,255,.32);border-radius:14px;backdrop-filter:blur(16px);box-shadow:0 20px 54px rgba(0,0,0,.55),0 0 26px rgba(31,162,255,.14);animation:cffloat 8s ease-in-out infinite;">
+          <div style="position:absolute;top:50%;right:100%;width:58px;height:2px;transform:translateY(-50%);background:linear-gradient(270deg,rgba(31,162,255,.75),rgba(31,162,255,0));"><div style="position:absolute;top:50%;right:0;width:9px;height:9px;border-radius:50%;background:#9ED8FF;box-shadow:0 0 12px #1FA2FF;animation:cfflowL 2.8s linear infinite;"></div></div>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(185,212,255,.7);line-height:1.35;">Revenue Generated</div>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(24px,2.6vw,30px);color:#fff;margin:7px 0 5px;">$86,420</div>
+          <div style="font-size:11.5px;"><span style="color:#35D6A0;font-weight:700;">+38%</span> <span style="color:rgba(244,246,251,.5);">this week</span></div>
+        </div>
+      </div>
+
+      <!-- CAPABILITY STRIP -->
+      <div data-reveal style="grid-column:1 / -1;margin-top:clamp(36px,5vw,60px);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:clamp(22px,3vw,30px) clamp(20px,3vw,34px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:22px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,46,60,.1);border:1px solid rgba(255,46,60,.3);">⏱</span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Works 24/7</div><div style="font-size:13px;color:rgba(244,246,251,.55);margin-top:2px;">No pauses. No days off.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(31,162,255,.1);border:1px solid rgba(31,162,255,.3);">💬</span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Responds Instantly</div><div style="font-size:13px;color:rgba(244,246,251,.55);margin-top:2px;">Never lose a customer.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,46,60,.1);border:1px solid rgba(255,46,60,.3);">🎯</span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Qualifies &amp; Converts</div><div style="font-size:13px;color:rgba(244,246,251,.55);margin-top:2px;">More opportunities, more sales.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(31,162,255,.1);border:1px solid rgba(31,162,255,.3);">📈</span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Scales Without Limits</div><div style="font-size:13px;color:rgba(244,246,251,.55);margin-top:2px;">Unlimited growth for your business.</div></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WHAT WE BUILD -->
+  <section style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">WHAT WE BUILD</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">Digital employees for every front-line task</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">One platform that replaces missed calls, slow replies and dropped leads with always-on AI built around your business.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:20px;">
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(31,162,255,.12);border:1px solid rgba(31,162,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">📞</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">AI Voice Agents</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Answer every inbound and outbound call instantly with natural, human-like conversation — no hold music, no voicemail.</p>
+        </div>
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(28,127,214,.12);border:1px solid rgba(28,127,214,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">💬</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">Messaging Assistants</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Respond across text, web chat and social messages in seconds — every channel, one intelligent employee.</p>
+        </div>
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,46,60,.12);border:1px solid rgba(255,46,60,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">🎯</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">Lead Qualification</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Score, tag and route every lead automatically so your team only spends time on conversations that close.</p>
+        </div>
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(31,162,255,.12);border:1px solid rgba(31,162,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">📅</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">Appointment Scheduling</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Book, confirm and reschedule directly into your calendar with zero back-and-forth and automatic reminders.</p>
+        </div>
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(28,127,214,.12);border:1px solid rgba(28,127,214,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">📄</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">Instant Estimates</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Generate accurate quotes and estimates on the spot, trained on your pricing, services and business rules.</p>
+        </div>
+        <div data-reveal style="padding:30px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,46,60,.12);border:1px solid rgba(255,46,60,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;">⚡</div>
+          <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:21px;margin:0 0 10px;">Smart Follow-Up</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">Follow up on every lead, confirm next steps and keep your team in the loop — automatically, day and night.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI WORKFORCE PLATFORM -->
+  <section id="platform" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:clamp(40px,5vw,72px);align-items:center;">
+      <div data-reveal>
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#FF2E3C;margin-bottom:16px;">AI WORKFORCE PLATFORM</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 20px;">One platform to hire, train and scale your AI workforce</h2>
+        <p style="font-size:17px;line-height:1.65;color:rgba(244,246,251,.62);margin:0 0 32px;">Every Carriersfy AI employee is trained on your business, connected to your tools, and continuously improving — managed from a single, holographic command center.</p>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;"><span style="width:30px;height:30px;border-radius:8px;background:rgba(31,162,255,.14);color:#1FA2FF;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">✓</span><div><div style="font-weight:600;font-size:16px;margin-bottom:3px;">Trained on your knowledge</div><div style="font-size:14.5px;color:rgba(244,246,251,.58);line-height:1.55;">Upload docs, scripts and FAQs — your AI speaks in your brand voice from day one.</div></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;"><span style="width:30px;height:30px;border-radius:8px;background:rgba(28,127,214,.14);color:#3FA9F5;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">✓</span><div><div style="font-weight:600;font-size:16px;margin-bottom:3px;">Fits how you already work</div><div style="font-size:14.5px;color:rgba(244,246,251,.58);line-height:1.55;">Slots into how your team takes calls, books time and follows up — without disrupting your day.</div></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;"><span style="width:30px;height:30px;border-radius:8px;background:rgba(255,46,60,.14);color:#FF2E3C;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">✓</span><div><div style="font-weight:600;font-size:16px;margin-bottom:3px;">Real-time analytics</div><div style="font-size:14.5px;color:rgba(244,246,251,.58);line-height:1.55;">Track every conversation, conversion and outcome from one live dashboard.</div></div></div>
+        </div>
+      </div>
+      <div data-reveal style="position:relative;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden;">
+        <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(28,127,214,.4),transparent 70%);filter:blur(20px);"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;position:relative;">
+          <div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Workforce Command Center</div>
+          <div style="font-size:12px;color:#1FA2FF;background:rgba(31,162,255,.1);padding:5px 11px;border-radius:8px;">LIVE</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;position:relative;">
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;"><div style="font-family:'Space Grotesk';font-weight:700;font-size:26px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">1,284</div><div style="font-size:12px;color:rgba(244,246,251,.55);margin-top:3px;">Calls handled</div></div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;"><div style="font-family:'Space Grotesk';font-weight:700;font-size:26px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">347</div><div style="font-size:12px;color:rgba(244,246,251,.55);margin-top:3px;">Leads qualified</div></div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;"><div style="font-family:'Space Grotesk';font-weight:700;font-size:26px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">128</div><div style="font-size:12px;color:rgba(244,246,251,.55);margin-top:3px;">Appointments booked</div></div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;"><div style="font-family:'Space Grotesk';font-weight:700;font-size:26px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">642</div><div style="font-size:12px;color:rgba(244,246,251,.55);margin-top:3px;">Quotes generated</div></div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(31,162,255,.14),rgba(255,46,60,.12));border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;position:relative;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div><div style="font-size:12px;color:rgba(244,246,251,.6);">Revenue influenced</div><div style="font-family:'Space Grotesk';font-weight:700;font-size:28px;">$2.4M</div></div><span style="font-size:12px;color:#1FA2FF;font-weight:600;background:rgba(31,162,255,.12);padding:5px 10px;border-radius:8px;">+34% MoM</span></div>
+          <div style="display:flex;align-items:flex-end;gap:7px;height:64px;">
+            <div style="flex:1;height:38%;background:linear-gradient(180deg,#1FA2FF,rgba(31,162,255,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:52%;background:linear-gradient(180deg,#1FA2FF,rgba(31,162,255,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:45%;background:linear-gradient(180deg,#1C7FD6,rgba(28,127,214,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:68%;background:linear-gradient(180deg,#1C7FD6,rgba(28,127,214,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:60%;background:linear-gradient(180deg,#FF2E3C,rgba(255,46,60,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:88%;background:linear-gradient(180deg,#FF2E3C,rgba(255,46,60,.2));border-radius:5px;"></div>
+            <div style="flex:1;height:100%;background:linear-gradient(180deg,#fff,rgba(255,255,255,.3));border-radius:5px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section id="industries" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">INDUSTRIES WE SERVE</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">Built for the businesses that never stop</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(244,246,251,.6);margin:0;">From service trades to high-volume sales teams, Carriersfy AI adapts to how your industry actually works.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:16px;">
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🚤</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Marine &amp; Boating</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Quotes, charters and service bookings handled instantly.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🪧</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Signs &amp; Print</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Custom estimates and project intake without the wait.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🏗️</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Home Services</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Never miss a service call or booking again.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🏥</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Healthcare &amp; Clinics</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Patient intake and scheduling, fully automated.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🏠</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Real Estate</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Capture and qualify every inquiry around the clock.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🚗</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Automotive</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Service appointments and quotes on autopilot.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">💼</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Professional Services</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Consultations booked while you focus on the work.</div></div>
+        <div data-reveal style="padding:26px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div style="font-size:28px;margin-bottom:14px;">🛒</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-bottom:6px;">Retail &amp; E-commerce</div><div style="font-size:13.5px;color:rgba(244,246,251,.55);line-height:1.5;">Support and sales conversations that never sleep.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section id="cases" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#FF2E3C;margin-bottom:16px;">CASE STUDIES</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">Real businesses. Measurable results.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:24px;">
+        <div data-reveal style="border-radius:26px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);">
+          <div style="height:180px;background:linear-gradient(135deg,rgba(31,162,255,.25),rgba(28,127,214,.18));position:relative;display:flex;align-items:center;justify-content:center;">
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:28px 28px;"></div>
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#fff;position:relative;z-index:1;">⚓ MarineQuote AI</div>
+          </div>
+          <div style="padding:32px;">
+            <p style="font-size:15.5px;line-height:1.6;color:rgba(244,246,251,.7);margin:0 0 24px;">An AI quoting employee for a marine services company — handling inbound charter and repair requests, generating estimates instantly and booking inspections without human delay.</p>
+            <div style="display:flex;gap:28px;flex-wrap:wrap;">
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#1FA2FF;">68%</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">More quotes sent</div></div>
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#1FA2FF;">&lt;1min</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">Avg. response</div></div>
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#1FA2FF;">24/7</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">Coverage</div></div>
+            </div>
+          </div>
+        </div>
+        <div data-reveal style="border-radius:26px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);">
+          <div style="height:180px;background:linear-gradient(135deg,rgba(255,46,60,.28),rgba(28,127,214,.18));position:relative;display:flex;align-items:center;justify-content:center;">
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:28px 28px;"></div>
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#fff;position:relative;z-index:1;">🪧 Brazil Signs AI</div>
+          </div>
+          <div style="padding:32px;">
+            <p style="font-size:15.5px;line-height:1.6;color:rgba(244,246,251,.7);margin:0 0 24px;">A bilingual AI sales employee for a custom signage company — qualifying leads, collecting project specs and generating estimates across calls and messages, day and night.</p>
+            <div style="display:flex;gap:28px;flex-wrap:wrap;">
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#FF2E3C;">3.2x</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">Lead capture</div></div>
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#FF2E3C;">0</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">Missed inquiries</div></div>
+              <div><div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#FF2E3C;">2</div><div style="font-size:12.5px;color:rgba(244,246,251,.5);margin-top:2px;">Languages</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET YOUR DIGITAL EMPLOYEE -->
+  <section style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 48px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">MEET YOUR DIGITAL EMPLOYEE</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">See Sophia handle a real conversation</h2>
+      </div>
+      <div data-reveal style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
+        <button id="cf-tab-0" onClick="{{ sel0 }}" style="padding:11px 22px;border-radius:100px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,#1FA2FF,#FF2E3C);color:#070B16;font-weight:700;font-size:14px;cursor:pointer;">📞 Inbound Call</button>
+        <button id="cf-tab-1" onClick="{{ sel1 }}" style="padding:11px 22px;border-radius:100px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#fff;font-weight:600;font-size:14px;cursor:pointer;">💬 SMS Lead</button>
+        <button id="cf-tab-2" onClick="{{ sel2 }}" style="padding:11px 22px;border-radius:100px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#fff;font-weight:600;font-size:14px;cursor:pointer;">📄 Estimate</button>
+      </div>
+      <div data-reveal style="max-width:620px;margin:0 auto;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.4);">
+        <div style="display:flex;align-items:center;gap:12px;padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.08);">
+          <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;">Sophia</div><div style="font-size:12px;color:#1FA2FF;">AI Employee · Responding</div></div>
+        </div>
+        <div id="cf-demo-0" style="display:flex;flex-direction:column;gap:12px;">
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Hi, do you guys do engine repairs on a 32-foot boat?</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Absolutely! We service vessels up to 45 feet. Can I grab your name and the marina you're docked at so I can schedule an inspection?</div>
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">James — I'm at Harbor Point.</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Perfect, James. I've booked an inspection for tomorrow at 10 AM and sent a confirmation. 🚤</div>
+        </div>
+        <div id="cf-demo-1" style="display:none;flex-direction:column;gap:12px;">
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Saw your ad — how much for a storefront sign?</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Great question! It depends on size and material. Roughly how wide is your storefront, and do you want illuminated or standard?</div>
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">About 12 feet, illuminated.</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">For a 12ft illuminated sign you're looking at $3,400–$4,200. Want me to lock in a design consult this week? ✅</div>
+        </div>
+        <div id="cf-demo-2" style="display:none;flex-direction:column;gap:12px;">
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Can I get a quote for a full vehicle wrap?</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Of course! What's the make and model, and is it a full or partial wrap?</div>
+          <div style="align-self:flex-start;max-width:80%;background:rgba(255,255,255,.06);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14.5px;line-height:1.5;">Ford Transit, full wrap.</div>
+          <div style="align-self:flex-end;max-width:80%;background:linear-gradient(135deg,rgba(31,162,255,.18),rgba(255,46,60,.18));border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 4px 16px;padding:12px 16px;font-size:14.5px;line-height:1.5;">A full wrap on a Ford Transit runs $3,800–$5,000 installed. I've emailed you a detailed estimate and a booking link. 📄</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE DIGITAL WORKFORCE OF THE FUTURE (V2) -->
+  <section id="workforce" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:800px;margin:0 auto 56px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">THE ECOSYSTEM</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(32px,4.8vw,60px);line-height:1.03;letter-spacing:-.02em;margin:0 0 18px;">The Digital Workforce<br>of the Future</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(244,246,251,.62);margin:0;">Not one assistant — an entire team of AI employees working together, sharing a single brain and covering every role in your business around the clock.</p>
+      </div>
+
+      <!-- constellation -->
+      <div data-reveal style="position:relative;width:100%;height:clamp(360px,48vw,480px);margin-bottom:44px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at center,rgba(28,127,214,.10),transparent 70%);border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 0 80px rgba(28,127,214,.08);">
+        <canvas id="cf-workforce" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+        <!-- central hub -->
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:2;">
+          <div style="position:relative;width:118px;height:118px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+            <div style="position:absolute;inset:-22px;border-radius:50%;background:radial-gradient(circle,rgba(31,162,255,.5),rgba(28,127,214,.14) 48%,transparent 70%);filter:blur(10px);animation:cfcore 4s ease-in-out infinite;"></div>
+            <div style="position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle at 60% 35%,rgba(255,46,60,.42),transparent 62%);filter:blur(10px);animation:cfglow 5s ease-in-out infinite;"></div>
+            <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(120,170,255,.22);"></div>
+            <img src="assets/carriersfy-emblem-core.png" alt="Carriersfy AI" style="position:relative;width:112px;height:auto;z-index:1;filter:drop-shadow(0 0 28px rgba(255,46,60,.65)) drop-shadow(0 0 22px rgba(31,162,255,.65));animation:cffloat 7s ease-in-out infinite;">
+          </div>
+          <div style="font-family:'Space Grotesk';font-weight:600;font-size:13.5px;">Carriersfy Core</div>
+          <div style="font-size:11px;color:rgba(244,246,251,.5);">Shared AI Brain</div>
+        </div>
+        <!-- employee node labels (hidden on small screens) -->
+        <div data-wf-label style="position:absolute;left:16%;top:28%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">S</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Sophia<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Receptionist</span></span></div>
+        <div data-wf-label style="position:absolute;left:50%;top:15%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">A</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Atlas<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Lead Qualification</span></span></div>
+        <div data-wf-label style="position:absolute;left:84%;top:28%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">N</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Nova<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Messaging Agent</span></span></div>
+        <div data-wf-label style="position:absolute;left:84%;top:74%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">T</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Titan<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Quote Generator</span></span></div>
+        <div data-wf-label style="position:absolute;left:50%;top:86%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">O</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Orion<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Sales Assistant</span></span></div>
+        <div data-wf-label style="position:absolute;left:16%;top:74%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:7px 13px 7px 8px;border-radius:100px;background:rgba(10,12,20,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap;z-index:2;"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#070B16;">E</span><span style="font-family:'Space Grotesk';font-weight:600;font-size:12.5px;">Echo<span style="color:rgba(244,246,251,.5);font-weight:500;"> · Support Agent</span></span></div>
+      </div>
+
+      <!-- roster -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:16px;">
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">S</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Sophia</div><div style="font-size:12px;color:#1FA2FF;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#1FA2FF;box-shadow:0 0 6px #1FA2FF;"></span>Receptionist · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Greets and routes every caller, answers FAQs and captures details instantly.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Calls today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">1,284</span></div>
+        </div>
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">A</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Atlas</div><div style="font-size:12px;color:#FF2E3C;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#FF2E3C;box-shadow:0 0 6px #FF2E3C;"></span>Lead Qualification · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Scores, tags and routes every lead so your team works only the hottest ones.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Leads today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">347</span></div>
+        </div>
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">N</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Nova</div><div style="font-size:12px;color:#1FA2FF;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#1FA2FF;box-shadow:0 0 6px #1FA2FF;"></span>Messaging Agent · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Handles text, chat and social messages in seconds — in any language.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Chats today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">638</span></div>
+        </div>
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">T</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Titan</div><div style="font-size:12px;color:#FF2E3C;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#FF2E3C;box-shadow:0 0 6px #FF2E3C;"></span>Quote Generator · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Builds accurate quotes and estimates from your pricing rules on the spot.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Quotes today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">64</span></div>
+        </div>
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">O</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Orion</div><div style="font-size:12px;color:#1FA2FF;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#1FA2FF;box-shadow:0 0 6px #1FA2FF;"></span>Sales Assistant · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Qualifies buyers, books demos and follows up until they convert.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Demos today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">52</span></div>
+        </div>
+        <div data-reveal style="padding:22px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#070B16;">E</span><div><div style="font-family:'Space Grotesk';font-weight:600;font-size:16px;">Echo</div><div style="font-size:12px;color:#FF2E3C;display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;border-radius:50%;background:#FF2E3C;box-shadow:0 0 6px #FF2E3C;"></span>Support Agent · Online</div></div></div>
+          <p style="font-size:13.5px;color:rgba(244,246,251,.62);line-height:1.5;margin:0 0 14px;">Resolves customer questions and tickets instantly, day and night.</p>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(244,246,251,.5);padding-top:12px;border-top:1px solid rgba(255,255,255,.07);"><span>Resolved today</span><span style="font-family:'Space Grotesk';font-weight:700;color:#fff;">540</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CARRIERSFY -->
+  <section style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#FF2E3C;margin-bottom:16px;">WHY CARRIERSFY AI</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0;">The workforce advantage of the future</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:20px;margin-bottom:48px;">
+        <div data-reveal style="text-align:center;padding:34px 22px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div data-count="100" data-suffix="%" style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(34px,4vw,46px);background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0</div><div style="font-size:14px;color:rgba(244,246,251,.6);margin-top:6px;">Calls &amp; messages answered</div></div>
+        <div data-reveal style="text-align:center;padding:34px 22px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div data-count="80" data-suffix="%" style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(34px,4vw,46px);background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0</div><div style="font-size:14px;color:rgba(244,246,251,.6);margin-top:6px;">Lower cost than hiring</div></div>
+        <div data-reveal style="text-align:center;padding:34px 22px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div data-count="14" data-suffix=" days" style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(34px,4vw,46px);background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0</div><div style="font-size:14px;color:rgba(244,246,251,.6);margin-top:6px;">From kickoff to live</div></div>
+        <div data-reveal style="text-align:center;padding:34px 22px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><div data-count="0" data-suffix=" sick days" style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(34px,4vw,46px);background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0</div><div style="font-size:14px;color:rgba(244,246,251,.6);margin-top:6px;">It never clocks out</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:20px;">
+        <div data-reveal style="padding:28px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0 0 8px;">Enterprise-grade reliability</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">Secure, dependable and always on, with the consistency your business can count on — day and night.</p></div>
+        <div data-reveal style="padding:28px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0 0 8px;">Human-quality conversation</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">Natural voice and tone so customers feel heard — not handled by a robot.</p></div>
+        <div data-reveal style="padding:28px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);"><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0 0 8px;">Fully managed for you</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">We design, build, deploy and optimize your AI employee end-to-end. You just watch it work.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">THE PROCESS</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0;">From idea to AI employee in four steps</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:20px;">
+        <div data-reveal style="padding:32px 26px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);position:relative;"><div style="font-family:'Space Grotesk';font-weight:700;font-size:40px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;">01</div><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0 0 8px;">Discover</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">We map your workflows, calls and customer journey to find where AI creates the most value.</p></div>
+        <div data-reveal style="padding:32px 26px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);"><div style="font-family:'Space Grotesk';font-weight:700;font-size:40px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;">02</div><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0 0 8px;">Design &amp; Build</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">We craft and train your AI employee on your voice, services and rules, then connect your tools.</p></div>
+        <div data-reveal style="padding:32px 26px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);"><div style="font-family:'Space Grotesk';font-weight:700;font-size:40px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;">03</div><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0 0 8px;">Deploy</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">Your AI employee goes live across calls and channels — answering, qualifying and booking from day one.</p></div>
+        <div data-reveal style="padding:32px 26px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);"><div style="font-family:'Space Grotesk';font-weight:700;font-size:40px;background:linear-gradient(120deg,#1FA2FF,#FF2E3C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;">04</div><h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0 0 8px;">Optimize</h3><p style="font-size:14px;line-height:1.55;color:rgba(244,246,251,.58);margin:0;">We continuously tune performance and report on outcomes so your AI keeps getting smarter.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div data-reveal style="text-align:center;max-width:720px;margin:0 auto 64px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#FF2E3C;margin-bottom:16px;">TESTIMONIALS</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0;">Trusted by businesses building the future</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:20px;">
+        <div data-reveal style="padding:32px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);"><div style="color:#1FA2FF;font-size:18px;margin-bottom:16px;">★★★★★</div><p style="font-size:16px;line-height:1.6;color:rgba(244,246,251,.85);margin:0 0 24px;">"It feels like we hired three people overnight. Our AI employee answers every call and books jobs while we sleep. Game-changing."</p><div style="display:flex;align-items:center;gap:12px;"><div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#1C7FD6);"></div><div><div style="font-weight:600;font-size:14.5px;">Marcus Reyes</div><div style="font-size:13px;color:rgba(244,246,251,.5);">Owner, MarineQuote</div></div></div></div>
+        <div data-reveal style="padding:32px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);"><div style="color:#1FA2FF;font-size:18px;margin-bottom:16px;">★★★★★</div><p style="font-size:16px;line-height:1.6;color:rgba(244,246,251,.85);margin:0 0 24px;">"We stopped losing leads after hours. The AI qualifies everyone in two languages and our close rate has never been higher."</p><div style="display:flex;align-items:center;gap:12px;"><div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#FF2E3C,#1C7FD6);"></div><div><div style="font-weight:600;font-size:14.5px;">Camila Souza</div><div style="font-size:13px;color:rgba(244,246,251,.5);">Director, Brazil Signs</div></div></div></div>
+        <div data-reveal style="padding:32px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);"><div style="color:#1FA2FF;font-size:18px;margin-bottom:16px;">★★★★★</div><p style="font-size:16px;line-height:1.6;color:rgba(244,246,251,.85);margin:0 0 24px;">"Carriersfy built and launched our AI employee in under two weeks. It's the best operational decision we've made this year."</p><div style="display:flex;align-items:center;gap:12px;"><div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);"></div><div><div style="font-weight:600;font-size:14.5px;">Daniel Pierce</div><div style="font-size:13px;color:rgba(244,246,251,.5);">CEO, Pierce Home Services</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" style="position:relative;z-index:1;padding:clamp(70px,9vw,130px) clamp(20px,5vw,56px);">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:clamp(40px,5vw,64px);align-items:start;">
+      <div data-reveal>
+        <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">GET STARTED</div>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">Tell us about your business</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(244,246,251,.62);margin:0 0 30px;max-width:520px;">Share a few details and we'll show you exactly how an AI employee would work for your business — with a clear plan and no pressure.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13.5px;font-weight:600;"><span style="color:#1FA2FF;">✓</span>Free strategy call</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13.5px;font-weight:600;"><span style="color:#1FA2FF;">✓</span>Live in ~14 days</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13.5px;font-weight:600;"><span style="color:#1FA2FF;">✓</span>No long-term contracts</span>
+        </div>
+        <a href="mailto:hello@carriersfy.ai" style="margin-top:26px;display:inline-flex;align-items:center;gap:13px;padding:13px 18px;border-radius:14px;text-decoration:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:all .3s ease;" style-hover="border-color:rgba(31,162,255,.45);background:rgba(31,162,255,.06);">
+          <span style="flex-shrink:0;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 0 22px rgba(28,127,214,.4);">✉</span>
+          <span style="line-height:1.3;"><span style="display:block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(185,212,255,.7);">Prefer email?</span><span style="display:block;font-family:'Space Grotesk';font-weight:600;font-size:16px;color:#F4F6FB;margin-top:2px;">hello@carriersfy.ai</span></span>
+        </a>
+      </div>
+      <div data-reveal style="border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);padding:clamp(26px,3vw,36px);box-shadow:0 30px 80px rgba(0,0,0,.4);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(28,127,214,.35),transparent 70%);filter:blur(24px);pointer-events:none;"></div>
+        <form id="cf-form" onSubmit="{{ submitContact }}" style="position:relative;display:flex;flex-direction:column;gap:18px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <label for="cf-name" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Name</label>
+              <input id="cf-name" name="name" type="text" required style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;" style-focus="border-color:#1FA2FF;background:rgba(31,162,255,.07);">
+            </div>
+            <div>
+              <label for="cf-business" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Business</label>
+              <input id="cf-business" name="business" type="text" style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;" style-focus="border-color:#1FA2FF;background:rgba(31,162,255,.07);">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <label for="cf-email" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Email</label>
+              <input id="cf-email" name="email" type="email" required style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;" style-focus="border-color:#1FA2FF;background:rgba(31,162,255,.07);">
+            </div>
+            <div>
+              <label for="cf-phone" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Phone</label>
+              <input id="cf-phone" name="phone" type="tel" style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;" style-focus="border-color:#1FA2FF;background:rgba(31,162,255,.07);">
+            </div>
+          </div>
+          <div>
+            <label for="cf-industry" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Industry</label>
+            <select id="cf-industry" name="industry" style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;cursor:pointer;" style-focus="border-color:#1FA2FF;">
+              <option value="" style="background:#0B0F1C;">Select your industry</option>
+              <option value="marine" style="background:#0B0F1C;">Marine &amp; Boating</option>
+              <option value="signs" style="background:#0B0F1C;">Signs &amp; Print</option>
+              <option value="home" style="background:#0B0F1C;">Home Services</option>
+              <option value="healthcare" style="background:#0B0F1C;">Healthcare &amp; Clinics</option>
+              <option value="realestate" style="background:#0B0F1C;">Real Estate</option>
+              <option value="automotive" style="background:#0B0F1C;">Automotive</option>
+              <option value="professional" style="background:#0B0F1C;">Professional Services</option>
+              <option value="retail" style="background:#0B0F1C;">Retail &amp; E-commerce</option>
+            </select>
+          </div>
+          <div>
+            <label for="cf-message" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Message</label>
+            <textarea id="cf-message" name="message" rows="3" style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;resize:vertical;" style-focus="border-color:#1FA2FF;background:rgba(31,162,255,.07);"></textarea>
+          </div>
+          <button type="submit" style="margin-top:4px;width:100%;color:#070B16;font-weight:700;font-size:15.5px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 10px 40px rgba(28,127,214,.4);border:none;cursor:pointer;font-family:'Manrope',sans-serif;transition:transform .3s ease,box-shadow .3s ease;" style-hover="transform:translateY(-2px);box-shadow:0 16px 50px rgba(28,127,214,.55);">Get Your AI Employee →</button>
+        </form>
+        <div id="cf-formsuccess" style="display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:40px 10px;position:relative;">
+          <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);display:flex;align-items:center;justify-content:center;font-size:30px;color:#070B16;box-shadow:0 0 36px rgba(28,127,214,.5);">✓</div>
+          <div style="font-family:'Space Grotesk';font-weight:600;font-size:20px;line-height:1.3;max-width:340px;">Thank you — we'll be in touch within one business day.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section id="cta" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,5vw,56px);">
+    <div data-reveal style="max-width:1000px;margin:0 auto;border-radius:32px;background:linear-gradient(135deg,rgba(31,162,255,.12),rgba(28,127,214,.1) 50%,rgba(255,46,60,.12));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(24px);padding:clamp(48px,7vw,90px) clamp(28px,5vw,72px);text-align:center;position:relative;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.5);">
+      <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(28,127,214,.5),transparent 70%);filter:blur(40px);"></div>
+      <div style="position:relative;">
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(32px,5vw,60px);line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;">Your AI employee is ready<br>to start working today</h2>
+        <p style="font-size:18px;line-height:1.6;color:rgba(244,246,251,.7);max-width:560px;margin:0 auto 36px;">Join the businesses building the future workforce with Carriersfy AI. Book a strategy call and see your digital employee in action.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
+          <a href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:17px 34px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 12px 44px rgba(28,127,214,.45);transition:transform .3s ease,box-shadow .3s ease;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
+          <a href="#contact" style="text-decoration:none;color:#fff;font-weight:600;font-size:16px;padding:17px 34px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);transition:all .3s ease;" style-hover="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);">Book a Strategy Call</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.08);padding:clamp(50px,6vw,72px) clamp(20px,5vw,56px) 40px;">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:40px;margin-bottom:48px;">
+      <div style="max-width:300px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="display:flex;align-items:center;"><img src="assets/carriersfy-emblem.png" alt="Carriersfy AI" style="height:40px;width:auto;display:block;filter:drop-shadow(0 0 9px rgba(255,46,60,.4));"></span><span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;letter-spacing:.04em;">CARRIERSFY <span style="color:#FF2E3C;font-weight:700;">AI</span></span></div>
+        <p style="font-size:14px;line-height:1.6;color:rgba(244,246,251,.5);margin:0;">Where business meets artificial intelligence. Building AI employees that work 24/7.</p>
+        <a href="mailto:hello@carriersfy.ai" style="display:inline-flex;align-items:center;gap:9px;margin-top:18px;text-decoration:none;font-size:14px;font-weight:600;color:#F4F6FB;" style-hover="color:#1FA2FF;"><span style="color:#1FA2FF;">✉</span>hello@carriersfy.ai</a>
+      </div>
+      <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:16px;">Platform</div><div style="display:flex;flex-direction:column;gap:11px;"><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">AI Workforce</a><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Voice Agents</a><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Integrations</a></div></div>
+      <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:16px;">Company</div><div style="display:flex;flex-direction:column;gap:11px;"><a href="#cases" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Case Studies</a><a href="#industries" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Industries</a><a href="#process" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Process</a></div></div>
+      <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:16px;">Get Started</div><div style="display:flex;flex-direction:column;gap:11px;"><a href="#contact" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Book a Call</a><a href="#contact" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Get Your AI Employee</a><a href="mailto:hello@carriersfy.ai" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">hello@carriersfy.ai</a></div></div>
+    </div>
+    <div style="max-width:1280px;margin:0 auto;padding-top:28px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;">
+      <div style="font-size:13px;color:rgba(244,246,251,.4);">© 2026 Carriersfy AI. All rights reserved.</div>
+      <div style="display:flex;gap:24px;"><a href="#top" style="color:rgba(244,246,251,.4);text-decoration:none;font-size:13px;">Privacy</a><a href="#top" style="color:rgba(244,246,251,.4);text-decoration:none;font-size:13px;">Terms</a><a href="mailto:hello@carriersfy.ai" style="color:rgba(244,246,251,.4);text-decoration:none;font-size:13px;">Contact</a></div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { menuOpen: false };
+
+  renderVals() {
+    if (!this._handlers) {
+      this._handlers = {
+        toggleMenu: () => this.setMenu(true),
+        closeMenu: () => this.setMenu(false),
+        sel0: () => this.selectDemo(0),
+        sel1: () => this.selectDemo(1),
+        sel2: () => this.selectDemo(2),
+        toggleLang: () => this.toggleLangMenu(),
+        setEn: () => this.setLang('en'),
+        setEs: () => this.setLang('es'),
+        setPt: () => this.setLang('pt'),
+        submitContact: (e) => this.handleContact(e),
+      };
+    }
+    return this._handlers;
+  }
+
+  setMenu(open) {
+    const m = document.getElementById('cf-mobilemenu');
+    if (m) m.style.display = open ? 'flex' : 'none';
+  }
+
+  selectDemo(i) {
+    for (let k = 0; k < 3; k++) {
+      const panel = document.getElementById('cf-demo-' + k);
+      const tab = document.getElementById('cf-tab-' + k);
+      if (panel) panel.style.display = (k === i) ? 'flex' : 'none';
+      if (tab) {
+        if (k === i) {
+          tab.style.background = 'linear-gradient(135deg,#1FA2FF,#FF2E3C)';
+          tab.style.color = '#070B16';
+          tab.style.fontWeight = '700';
+        } else {
+          tab.style.background = 'rgba(255,255,255,.04)';
+          tab.style.color = '#fff';
+          tab.style.fontWeight = '600';
+        }
+      }
+    }
+  }
+
+  handleContact(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const form = document.getElementById('cf-form');
+    const ok = document.getElementById('cf-formsuccess');
+    if (form) form.style.display = 'none';
+    if (ok) ok.style.display = 'flex';
+  }
+
+  componentDidMount() {
+    this.initNav();
+    this.initReveal();
+    this.initParticles();
+    this.initCore();
+    this.initWorkforce();
+    this.initI18n(0);
+  }
+
+  initI18n(attempt) {
+    if (!window.CF_I18N) {
+      if ((attempt || 0) < 25) { setTimeout(() => this.initI18n((attempt || 0) + 1), 150); }
+      return;
+    }
+    const dict = window.CF_I18N;
+    this._i18nDict = dict;
+    const keys = new Set([...Object.keys(dict.es || {}), ...Object.keys(dict.pt || {})]);
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      const full = n.nodeValue;
+      const t = (full || '').trim();
+      if (t && keys.has(t)) { n.__en = t; n.__full = full; nodes.push(n); }
+    }
+    this._i18nNodes = nodes;
+    let lang = 'en';
+    const seg = (location.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
+    if (['en', 'es', 'pt'].includes(seg)) lang = seg;
+    else { try { const s = localStorage.getItem('cf_lang'); if (s && ['en','es','pt'].includes(s)) lang = s; } catch (e) {} }
+    this.applyLang(lang, false);
+  }
+
+  applyLang(lang, push) {
+    const dict = this._i18nDict || {};
+    const table = dict[lang] || {};
+    (this._i18nNodes || []).forEach((node) => {
+      const tr = (lang === 'en') ? node.__en : (table[node.__en] || node.__en);
+      node.nodeValue = node.__full.replace(node.__en, tr);
+    });
+    const lbl = document.getElementById('cf-langlabel');
+    if (lbl) lbl.textContent = lang.toUpperCase();
+    try { document.documentElement.lang = lang; } catch (e) {}
+    try { localStorage.setItem('cf_lang', lang); } catch (e) {}
+    if (push) {
+      try {
+        const base = location.pathname.replace(/\/(en|es|pt)\/?$/i, '').replace(/\/$/, '');
+        history.replaceState(null, '', base + '/' + lang + location.hash);
+      } catch (e) {}
+    }
+    this._lang = lang;
+    const m = document.getElementById('cf-langmenu'); if (m) m.style.display = 'none';
+  }
+
+  setLang(lang) { this.applyLang(lang, true); }
+
+  toggleLangMenu() {
+    const m = document.getElementById('cf-langmenu');
+    if (m) m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this._coreRaf) cancelAnimationFrame(this._coreRaf);
+    if (this._wfRaf) cancelAnimationFrame(this._wfRaf);
+    if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+    if (this._revealCheck) { window.removeEventListener('scroll', this._revealCheck); window.removeEventListener('resize', this._revealCheck); }
+    if (this._io) this._io.disconnect();
+    if (this._counterIO) this._counterIO.disconnect();
+  }
+
+  initNav() {
+    const nav = document.getElementById('cf-nav');
+    this._onScroll = () => {
+      if (!nav) return;
+      if (window.scrollY > 24) {
+        nav.style.background = 'rgba(7,11,22,.72)';
+        nav.style.backdropFilter = 'blur(20px)';
+        nav.style.borderBottom = '1px solid rgba(255,255,255,.08)';
+      } else {
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.borderBottom = '1px solid transparent';
+      }
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onScroll();
+  }
+
+  initReveal() {
+    // Entrance reveal is driven purely by the [data-reveal] CSS animation (survives React re-renders).
+    // Here we only handle the count-up numbers, with a robust manual viewport check + safety net.
+    const countEls = Array.from(document.querySelectorAll('[data-count]'));
+    const fireCount = (el) => {
+      if (el.dataset.counted === '1') return;
+      el.dataset.counted = '1';
+      this.animateCount(el);
+    };
+    const check = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      countEls.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.9 && r.bottom > 0) fireCount(el);
+      });
+    };
+    this._revealCheck = check;
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check, { passive: true });
+    check();
+    [200, 600, 1400].forEach(t => setTimeout(check, t));
+    try {
+      this._counterIO = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) fireCount(e.target); });
+      }, { threshold: 0.4 });
+      countEls.forEach(el => this._counterIO.observe(el));
+    } catch (err) { /* manual check covers it */ }
+    setTimeout(() => countEls.forEach(fireCount), 2200);
+  }
+
+  animateCount(el) {
+    const target = parseFloat(el.getAttribute('data-count')) || 0;
+    const suffix = el.getAttribute('data-suffix') || '';
+    const dur = 1400;
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  initParticles() {
+    const canvas = document.getElementById('cf-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    const COUNT = 70;
+    let pts = [];
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    this._onResize = resize;
+    window.addEventListener('resize', resize);
+    resize();
+    pts = Array.from({ length: COUNT }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.6 + 0.6,
+    }));
+    // animated glass particles (soft bokeh)
+    const bokeh = Array.from({ length: 16 }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.12, vy: (Math.random() - 0.5) * 0.12,
+      r: Math.random() * 60 + 26,
+      hue: Math.random() < 0.5 ? '31,162,255' : '255,46,60',
+      a: Math.random() * 0.05 + 0.02,
+    }));
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      for (const b of bokeh) {
+        b.x += b.vx; b.y += b.vy;
+        if (b.x < -120 || b.x > w + 120) b.vx *= -1;
+        if (b.y < -120 || b.y > h + 120) b.vy *= -1;
+        const bg = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+        bg.addColorStop(0, 'rgba(' + b.hue + ',' + b.a + ')');
+        bg.addColorStop(1, 'rgba(' + b.hue + ',0)');
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+      }
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(150,180,255,0.55)';
+        ctx.fill();
+        for (let j = i + 1; j < pts.length; j++) {
+          const q = pts[j];
+          const dx = p.x - q.x, dy = p.y - q.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = 'rgba(120,150,255,' + (0.14 * (1 - dist / 130)) + ')';
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+      this.raf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  initCore() {
+    const canvas = document.getElementById('cf-core');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr, cx, cy, R;
+    const N = 300;
+    const pts = [];
+    const off = 2 / N, inc = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < N; i++) {
+      const y = i * off - 1 + off / 2;
+      const rad = Math.sqrt(Math.max(0, 1 - y * y));
+      const phi = i * inc;
+      pts.push([Math.cos(phi) * rad, y, Math.sin(phi) * rad]);
+    }
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = w / 2; cy = h / 2; R = Math.min(w, h) * 0.40;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    const tilt = 0.5, ct = Math.cos(tilt), st = Math.sin(tilt);
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      const now = performance.now();
+      const A = now * 0.00038, cosA = Math.cos(A), sinA = Math.sin(A);
+      const pulse = 0.5 + 0.5 * Math.sin(now * 0.002);
+      // central holographic glow
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * (0.7 + 0.25 * pulse));
+      g.addColorStop(0, 'rgba(160,220,255,' + (0.5 + 0.18 * pulse) + ')');
+      g.addColorStop(0.4, 'rgba(28,127,214,0.22)');
+      g.addColorStop(1, 'rgba(28,127,214,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+      // project rotating sphere
+      const proj = [];
+      for (const p of pts) {
+        const x = p[0], y0 = p[1], z = p[2];
+        const x1 = x * cosA - z * sinA, z1 = x * sinA + z * cosA;
+        const y2 = y0 * ct - z1 * st, z2 = y0 * st + z1 * ct;
+        proj.push({ x: cx + x1 * R, y: cy + y2 * R, z: z2 });
+      }
+      proj.sort((a, b) => a.z - b.z);
+      for (const p of proj) {
+        const d = (p.z + 1) / 2;
+        const alpha = 0.22 + 0.62 * d, size = 0.7 + 1.9 * d;
+        ctx.beginPath(); ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + Math.round(90 + 110 * d) + ',' + Math.round(210 - 30 * d) + ',255,' + alpha + ')';
+        ctx.fill();
+      }
+      this._coreRaf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  initWorkforce() {
+    const canvas = document.getElementById('cf-workforce');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    const anchors = [[0.5, 0.5], [0.16, 0.28], [0.5, 0.15], [0.84, 0.28], [0.84, 0.74], [0.5, 0.86], [0.16, 0.74]];
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      const t = performance.now() * 0.001;
+      const hx = anchors[0][0] * w, hy = anchors[0][1] * h;
+      for (let i = 1; i < anchors.length; i++) {
+        const ox = anchors[i][0] * w, oy = anchors[i][1] * h;
+        ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ox, oy);
+        ctx.strokeStyle = 'rgba(120,150,255,0.16)'; ctx.lineWidth = 1; ctx.stroke();
+        const f = ((t * 0.45) + (i * 0.13)) % 1;
+        const px = hx + (ox - hx) * f, py = hy + (oy - hy) * f;
+        const pc = (i % 2) ? '255,70,86' : '80,175,255';
+        const grd = ctx.createRadialGradient(px, py, 0, px, py, 7);
+        grd.addColorStop(0, 'rgba(' + pc + ',0.95)'); grd.addColorStop(1, 'rgba(' + pc + ',0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fill();
+      }
+      for (let i = 0; i < anchors.length; i++) {
+        const x = anchors[i][0] * w, y = anchors[i][1] * h;
+        const isHub = i === 0, rad = isHub ? 9 : 5;
+        const pulse = 0.6 + 0.4 * Math.sin(t * 2 + i);
+        const grd = ctx.createRadialGradient(x, y, 0, x, y, rad * 3.2);
+        grd.addColorStop(0, 'rgba(150,210,255,' + (0.5 * pulse + 0.28) + ')');
+        grd.addColorStop(1, 'rgba(28,127,214,0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath(); ctx.arc(x, y, rad * 3.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = isHub ? '#cdeeff' : '#a8caff';
+        ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+      }
+      this._wfRaf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+}
+</script>
+</body>
+</html>
