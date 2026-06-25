@@ -1,17 +1,17 @@
 # AGENT REGISTRY — Carriersfy AI
 
-> Master index of all AI agents/employees deployed or planned. Last updated: 2026-06-25
+> Master index of all AI agents/employees deployed or planned. Last updated: 2026-06-25 | Fast lookup: [INDEXES/AGENTS.md](../INDEXES/AGENTS.md)
 
 ---
 
 ## Registry Overview
 
-| Agent | Type | Role | Status | Client Facing | Detail |
-|---|---|---|---|---|---|
-| [Iron Prime](#iron-prime) | Sales AI | Lead generation, outbound prospecting, qualification | [PLANNED] | Yes — prospects | [→](../AI/Iron_Prime/Purpose.md) |
-| [Sofia](#sofia) | Operations AI | Client onboarding, scheduling, internal ops | [PLANNED] | Yes — active clients | [→](../AI/Sofia/Purpose.md) |
-| [Claude Code](#claude-code) | Engineering AI | Development, deployment, infrastructure, debugging | [ACTIVE] | No — internal only | [→](../AI/Claude_Code/Purpose.md) |
-| [Claude Design](#claude-design) | Design AI | UI/UX design, brand assets, visual direction | [ACTIVE — on-demand] | No — internal only | [→](../AI/Claude_Design/Purpose.md) |
+| Entity ID | Agent | Type | Role | Status | Client Facing | Detail |
+|---|---|---|---|---|---|---|
+| CF-AGT-001 | [Iron Prime](#iron-prime) | Sales AI | Lead generation, outbound prospecting, qualification | [PLANNED] | Yes — prospects | [→](../AI/Iron_Prime/Purpose.md) |
+| CF-AGT-002 | [Sofia](#sofia) | Operations AI | Client onboarding, scheduling, internal ops | [PLANNED] | Yes — active clients | [→](../AI/Sofia/Purpose.md) |
+| CF-AGT-003 | [Claude Code](#claude-code) | Engineering AI | Development, deployment, infrastructure, debugging | [ACTIVE] | No — internal only | [→](../AI/Claude_Code/Purpose.md) |
+| CF-AGT-004 | [Claude Design](#claude-design) | Design AI | UI/UX design, brand assets, visual direction | [ACTIVE — on-demand] | No — internal only | [→](../AI/Claude_Design/Purpose.md) |
 
 ---
 
@@ -48,7 +48,7 @@
 | **Permission Level** | Calendar read/write, email send (client comms), task creation, CRM update |
 | **Hosting** | TBD — see [ADR-009](DECISION_ENGINE.md) |
 | **Active Clients** | None yet |
-| **Assigned Tasks** | [TASK-002](TASK_ENGINE.md), [TASK-003](TASK_ENGINE.md), [TASK-004](TASK_ENGINE.md), [TASK-008](TASK_ENGINE.md) |
+| **Planned Tasks (activates upon deployment)** | [TASK-002](TASK_ENGINE.md), [TASK-003](TASK_ENGINE.md), [TASK-004](TASK_ENGINE.md), [TASK-008](TASK_ENGINE.md) |
 | **Detail** | [Sofia Full Profile](../AI/Sofia/Purpose.md) |
 
 ---

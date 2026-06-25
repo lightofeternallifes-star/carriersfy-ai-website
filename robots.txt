@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block internal system directories from crawlers
+Disallow: /OMEGA/
+Disallow: /config/
+Disallow: /docs/
+Disallow: /pages/
+Disallow: /codex/
+
+Sitemap: https://carriersfy.ai/sitemap.xml

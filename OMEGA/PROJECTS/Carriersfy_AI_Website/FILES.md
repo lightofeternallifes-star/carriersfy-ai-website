@@ -1,7 +1,7 @@
 # Files — Carriersfy AI Website
 
 > Complete file inventory for the project. Last updated: 2026-06-25
-> Repository root: `/Users/batman/Downloads/CARRIERSFY_AI_WEBSITE_V1.1_FINAL`
+> Repository root: `[repo root]`
 
 ---
 

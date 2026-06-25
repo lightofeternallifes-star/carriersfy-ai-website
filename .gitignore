@@ -1,0 +1,42 @@
+# Enterprise Memory OS — internal only, never serve publicly
+OMEGA/
+
+# Environment variables — never commit
+.env
+.env.*
+!.env.example
+
+# Node / development artifacts
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE artifacts
+.vscode/settings.json
+.idea/
+*.iml
+
+# Cloudflare Wrangler
+.wrangler/
+wrangler.toml
+
+# Local dev secrets
+.dev.vars
+
+# Logs
+*.log

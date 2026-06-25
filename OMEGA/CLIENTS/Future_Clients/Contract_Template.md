@@ -75,9 +75,44 @@ appropriate human oversight of AI Employee outputs, particularly for decisions
 involving financial commitments, legal matters, or sensitive customer situations.
 ```
 
+### 9a. Intellectual Property Ownership
+```
+All intellectual property created by Carriersfy AI under this agreement — including 
+conversation flows, knowledge bases, and AI employee configurations — remains the 
+property of Carriersfy AI until full payment is received for the engagement in which 
+it was created. Upon receipt of full payment, Client receives a perpetual, 
+non-exclusive license to use the deliverables for their stated purpose.
+
+Client retains full ownership of all data, content, and materials provided to 
+Carriersfy AI for AI training and configuration. Carriersfy AI will not use 
+Client's proprietary data to build products or services for other clients.
+```
+
+### 9b. Data Privacy and Regulatory Compliance
+```
+Both parties agree to comply with applicable data protection laws, including:
+
+U.S. Clients: CAN-SPAM Act, FTC AI disclosure guidelines, and any applicable 
+state laws (CCPA for California residents).
+
+Brazilian Clients: Lei Geral de Proteção de Dados (LGPD). Client acknowledges 
+they are the Data Controller and Carriersfy AI is the Data Processor for all 
+client data processed by the AI Employee. Carriersfy AI will process data only 
+as instructed by Client and will implement appropriate security measures.
+
+Both parties agree that all AI Employees will identify themselves as AI systems 
+when sincerely asked by any human, in compliance with FTC guidance.
+```
+
 ### 10. Governing Law
 ```
-This agreement shall be governed by the laws of [STATE/COUNTRY].
+This agreement shall be governed by the laws of [specify: state for U.S. clients 
+(e.g., "the State of Florida") or country for international clients 
+(e.g., "Brazil, with jurisdiction in São Paulo")].
+
+IMPORTANT: Fill in the governing jurisdiction before signing. For U.S. clients: 
+name a specific state. For Brazilian clients: specify Brazilian law and a city 
+for jurisdiction. Do not leave this blank.
 ```
 
 ---

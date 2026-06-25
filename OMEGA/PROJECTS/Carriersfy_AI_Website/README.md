@@ -16,7 +16,7 @@ The Carriersfy AI marketing website is the primary public presence and lead gene
 |---|---|
 | **Live URL** | https://carriersfy.ai |
 | **Status** | [LIVE] — Version 1.1.1 |
-| **Repository** | `/Users/batman/Downloads/CARRIERSFY_AI_WEBSITE_V1.1_FINAL` (local) / GitHub: lightofeternallifes-star |
+| **Repository** | GitHub: lightofeternallifes-star |
 | **Hosting** | Cloudflare Pages (auto-deploy from GitHub main) |
 | **Primary Owner** | Juan (juan@carriersfy.ai) |
 | **Engineering** | Claude Code (Anthropic CLI) |

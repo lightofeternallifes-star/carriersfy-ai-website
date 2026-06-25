@@ -42,7 +42,7 @@
 - [ ] Configure escalation triggers
 - [ ] Set up integrations (CRM, WhatsApp, email, etc.)
 - [ ] Internal testing — 50+ test conversations
-- [ ] Document all configuration in [Current_Build](../../CLIENTS/[ClientName]/Current_Build.md)
+- [ ] Document all configuration in `CLIENTS/[ClientName]/Current_Build.md` (replace [ClientName] with the client's actual folder name)
 
 ---
 
@@ -63,8 +63,8 @@
 - [ ] Address any edge cases or mishandled queries
 - [ ] Send go-live notification email to client
 - [ ] Set up performance reporting cadence (weekly or biweekly)
-- [ ] Update [CURRENT_STATUS](../../PROJECTS/[ClientName]/CURRENT_STATUS.md) to [LIVE]
-- [ ] Add V1.0 entry to [CHANGELOG](../../PROJECTS/[ClientName]/CHANGELOG.md)
+- [ ] Update `PROJECTS/[ClientName]/CURRENT_STATUS.md` to [LIVE] (replace [ClientName] with the project's actual folder name)
+- [ ] Add V1.0 entry to `PROJECTS/[ClientName]/CHANGELOG.md` (replace [ClientName] with the project's actual folder name)
 
 ---
 
@@ -73,7 +73,7 @@
 - [ ] Compile performance data (conversations handled, escalations, conversion impact)
 - [ ] Schedule 30-day review call with client
 - [ ] Identify optimization opportunities
-- [ ] Document findings in [Meetings](../../CLIENTS/[ClientName]/Meetings.md)
+- [ ] Document findings in `CLIENTS/[ClientName]/Meetings.md` (replace [ClientName] with the client's actual folder name)
 - [ ] Confirm client satisfaction and retainer renewal
 
 ---

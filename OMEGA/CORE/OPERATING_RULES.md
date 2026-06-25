@@ -155,6 +155,21 @@ Every client deliverable is versioned:
 
 ---
 
+## Rule 11a: Project Taxonomy
+
+Every project in OMEGA must be classified into exactly one of these types:
+
+| Type | Definition | Example |
+|---|---|---|
+| Internal | Owned and operated by Carriersfy AI | Carriersfy AI Website |
+| Client | Built for a specific client | Brazil Signs AI Employee |
+| Infrastructure | Platform or tooling supporting all other projects | Internal Infrastructure |
+| Pipeline | Pre-sales, proposal, or scoping stage | Future Clients |
+
+Classification appears in the project's `README.md` header and its `PROJECT_REGISTRY.md` entry. When a project transitions types (e.g., Pipeline → Client upon contract signing), update both files on the same day.
+
+---
+
 ## Rule 12: The Contact Email is juan@carriersfy.ai
 
 All critical alerts, escalations, and client communications copy or direct to `juan@carriersfy.ai`. This is the single owner address. `hello@carriersfy.ai` is a secondary team inbox.
@@ -163,4 +178,19 @@ No AI employee sends a final email to a client or prospect without Juan having a
 
 ---
 
-**Related:** [MEMORY_PROTOCOL](MEMORY_PROTOCOL.md) | [MASTER_CONTEXT](MASTER_CONTEXT.md) | [AGENT_REGISTRY](AGENT_REGISTRY.md) | [COMPANY_CONSTITUTION](COMPANY_CONSTITUTION.md)
+## Rule 13: AI Identity Disclosure is Non-Negotiable
+
+Every AI employee deployed by Carriersfy AI — including Iron Prime, Sofia, and all client-deployed agents — must:
+
+1. **Identify as AI** when directly asked: "I'm [Name], an AI assistant for [Company]."
+2. **Never deny being AI** to a human who sincerely asks.
+3. **Announce role at session start** for first-time interactions.
+4. **Escalate to Juan** when a human explicitly requests to speak with a human agent.
+
+This is a legal requirement under FTC AI disclosure guidance. Violating this rule creates liability for Carriersfy AI and the client. See [COMPLIANCE](COMPLIANCE.md) for full regulatory context.
+
+No AI employee may be configured to deny its AI nature under any circumstances. Any agent configuration violating this rule must be corrected before deployment.
+
+---
+
+**Related:** [MEMORY_PROTOCOL](MEMORY_PROTOCOL.md) | [MASTER_CONTEXT](MASTER_CONTEXT.md) | [AGENT_REGISTRY](AGENT_REGISTRY.md) | [COMPANY_CONSTITUTION](COMPANY_CONSTITUTION.md) | [COMPLIANCE](COMPLIANCE.md)

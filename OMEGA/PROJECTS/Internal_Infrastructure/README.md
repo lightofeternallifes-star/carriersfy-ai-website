@@ -16,12 +16,29 @@ This project covers all Carriersfy AI internal infrastructure: domain management
 |---|---|---|---|
 | Domain: carriersfy.ai | [LIVE] | Cloudflare DNS | Primary company domain |
 | Cloudflare account | [LIVE] | Juan's account | Hosts carriersfy.ai DNS + Pages |
-| GitHub account | [LIVE] | lightofeternallifes-star | Source control for all repos |
+| GitHub account | [LIVE] | lightofeternallifes-star | Source control for all repos. Auto-deploys to Cloudflare Pages on push to main. |
 | Resend account | [LIVE] | Juan's Resend account | Email delivery for leads@carriersfy.ai |
 | Email domain: leads@carriersfy.ai | [LIVE] | Resend (verified) | FROM address for transactional email |
 | Inbox: juan@carriersfy.ai | [LIVE] | Juan's primary email | Receives lead notifications |
 | Inbox: hello@carriersfy.ai | [LIVE] | Team inbox | Secondary recipient for leads |
 | OMEGA (this system) | [LIVE] | /OMEGA/ in website repo | Enterprise memory OS |
+
+---
+
+## GitHub Account Details
+
+| Attribute | Value |
+|---|---|
+| **GitHub Username** | lightofeternallifes-star |
+| **Account Type** | Personal (acting as company account) |
+| **Primary Repo** | Carriersfy AI Website (public) |
+| **Default Branch** | `main` — push here triggers Cloudflare Pages auto-deploy |
+| **Branch Strategy** | Feature branches → PR → merge to main |
+| **Future** | Migrate to GitHub Organization when team grows beyond Juan |
+
+**Integration:** GitHub `main` branch is connected to Cloudflare Pages. Every merge to `main` triggers a new production deploy. Deployments visible in Cloudflare Pages dashboard.
+
+See [KNOWLEDGE_GRAPH — GitHub](../../CORE/KNOWLEDGE_GRAPH.md) for full entity details.
 
 ---
 

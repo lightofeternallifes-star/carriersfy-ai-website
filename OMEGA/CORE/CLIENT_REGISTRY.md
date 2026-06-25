@@ -1,59 +1,62 @@
 # CLIENT REGISTRY — Carriersfy AI
 
-> Master index of all clients. Single source of truth for client status and relationships. Last updated: 2026-06-25
+> Master index of all clients. Single source of truth for client status and relationships. Last updated: 2026-06-25 | Fast lookup: [INDEXES/CLIENTS.md](../INDEXES/CLIENTS.md)
 
 ---
 
 ## Active Clients
 
-### Brazil Signs
+### CF-CLI-001 — Brazil Signs
 | Field | Value |
 |---|---|
+| **Entity ID** | CF-CLI-001 |
 | **Industry** | Signage / Print / Visual Communication |
 | **Geography** | Brazil |
 | **Stage** | Active — build status requires assessment |
 | **Primary Contact** | Unknown — requires discovery meeting |
-| **Active Projects** | [Brazil Signs Project](../PROJECTS/Brazil_Signs/README.md) |
+| **Active Projects** | [CF-PRJ-003 — Brazil Signs Project](../PROJECTS/Brazil_Signs/README.md) |
 | **Client Folder** | [/CLIENTS/Brazil_Signs/](../CLIENTS/Brazil_Signs/Business_Profile.md) |
 | **LTV Tier** | Unknown — TBD post-assessment |
 | **Health** | [UNKNOWN — NEEDS ASSESSMENT] |
 | **Last Touchpoint** | Unknown |
 | **Assigned AI Employees** | Unknown — requires discovery |
-| **Action Required** | Schedule discovery/status meeting by 2026-07-05 |
+| **Action Required** | Schedule discovery/status meeting by 2026-07-05 (CF-TSK-002) |
 
 ---
 
-### Marine Consolidated Electronics
+### CF-CLI-002 — Marine Consolidated Electronics
 | Field | Value |
 |---|---|
+| **Entity ID** | CF-CLI-002 |
 | **Industry** | Marine Electronics / Marine Industry |
 | **Geography** | Unknown (likely U.S.) |
 | **Stage** | Active — build status requires assessment |
 | **Primary Contact** | Unknown — requires discovery meeting |
-| **Active Projects** | [Marine Project](../PROJECTS/Marine_Consolidated_Electronics/README.md) |
+| **Active Projects** | [CF-PRJ-004 — Marine Project](../PROJECTS/Marine_Consolidated_Electronics/README.md) |
 | **Client Folder** | [/CLIENTS/Marine/](../CLIENTS/Marine/Business_Profile.md) |
 | **LTV Tier** | Unknown — TBD post-assessment |
 | **Health** | [UNKNOWN — NEEDS ASSESSMENT] |
 | **Last Touchpoint** | Unknown |
 | **Assigned AI Employees** | Unknown — requires discovery |
-| **Action Required** | Schedule discovery/status meeting by 2026-07-05 |
+| **Action Required** | Schedule discovery/status meeting by 2026-07-05 (CF-TSK-003) |
 
 ---
 
-### Light of Life
+### CF-CLI-003 — Light of Life
 | Field | Value |
 |---|---|
+| **Entity ID** | CF-CLI-003 |
 | **Industry** | Faith Community / Nonprofit / Religious Organization |
 | **Geography** | Unknown |
 | **Stage** | Active — build status requires assessment |
 | **Primary Contact** | Unknown — requires discovery meeting |
-| **Active Projects** | [Light of Life Project](../PROJECTS/Light_of_Life/README.md) |
-| **Client Folder** | No dedicated client folder yet — create when details known |
+| **Active Projects** | [CF-PRJ-005 — Light of Life Project](../PROJECTS/Light_of_Life/README.md) |
+| **Client Folder** | [/CLIENTS/Light_of_Life/](../CLIENTS/Light_of_Life/Business_Profile.md) |
 | **LTV Tier** | Unknown — TBD post-assessment |
 | **Health** | [UNKNOWN — NEEDS ASSESSMENT] |
 | **Last Touchpoint** | Unknown |
 | **Assigned AI Employees** | Unknown |
-| **Action Required** | Schedule discovery meeting by 2026-07-10 |
+| **Action Required** | Schedule discovery meeting by 2026-07-10 (CF-TSK-004) |
 
 ---
 

@@ -1,20 +1,21 @@
 # PROJECT REGISTRY — Carriersfy AI
 
-> Master index of all projects. Last updated: 2026-06-25
+> Master index of all projects. Last updated: 2026-06-25 | Fast lookup: [INDEXES/PROJECTS.md](../INDEXES/PROJECTS.md)
 
 ---
 
 ## Active Projects
 
-| # | Project | Status | Owner | Stack | URL | Client | Last Updated |
+| Entity ID | Project | Status | Owner | Stack | URL | Client | Last Updated |
 |---|---|---|---|---|---|---|---|
-| 1 | [Carriersfy AI Website](../PROJECTS/Carriersfy_AI_Website/README.md) | [LIVE] V1.1 | Juan + Claude Code | HTML/JS/CF Pages | https://carriersfy.ai | Internal | 2026-06-24 |
-| 2 | [Carriersfy Platform](../PROJECTS/Carriersfy_Platform/README.md) | [PLANNED] | Juan | TBD | — | Internal | 2026-06-25 |
-| 3 | [Brazil Signs](../PROJECTS/Brazil_Signs/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | Brazil Signs | Unknown |
-| 4 | [Marine Consolidated Electronics](../PROJECTS/Marine_Consolidated_Electronics/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | Marine Consolidated | Unknown |
-| 5 | [Light of Life](../PROJECTS/Light_of_Life/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | Light of Life | Unknown |
-| 6 | [Internal Infrastructure](../PROJECTS/Internal_Infrastructure/README.md) | [IN PROGRESS] | Juan | Cloudflare + GitHub + Resend | — | Internal | 2026-06-25 |
-| 7 | [Future Clients](../PROJECTS/Future_Clients/README.md) | [ACTIVE — PIPELINE] | Juan + Iron Prime | — | — | Multiple | 2026-06-25 |
+| CF-PRJ-001 | [Carriersfy AI Website](../PROJECTS/Carriersfy_AI_Website/README.md) | [LIVE] V1.1 | Juan + CF-AGT-003 | HTML/JS/CF Pages | https://carriersfy.ai | Internal | 2026-06-25 |
+| CF-PRJ-002 | [Carriersfy Platform](../PROJECTS/Carriersfy_Platform/README.md) | [PLANNED] | Juan | TBD (CF-ADR-006) | — | Internal | 2026-06-25 |
+| CF-PRJ-003 | [Brazil Signs](../PROJECTS/Brazil_Signs/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | CF-CLI-001 | Unknown |
+| CF-PRJ-004 | [Marine Consolidated Electronics](../PROJECTS/Marine_Consolidated_Electronics/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | CF-CLI-002 | Unknown |
+| CF-PRJ-005 | [Light of Life](../PROJECTS/Light_of_Life/README.md) | [UNKNOWN — NEEDS ASSESSMENT] | Juan | Unknown | Unknown | CF-CLI-003 | Unknown |
+| CF-PRJ-006 | [Internal Infrastructure](../PROJECTS/Internal_Infrastructure/README.md) | [IN PROGRESS] | Juan | CF-INT-001 + CF-INT-002 + CF-INT-003 | — | Internal | 2026-06-25 |
+| CF-PRJ-007 | [Future Clients](../PROJECTS/Future_Clients/README.md) | [ACTIVE — PIPELINE] | Juan + CF-AGT-001 | — | — | Multiple | 2026-06-25 |
+| CF-PRJ-008 | CODEX Component Library | [IN PROGRESS] | Juan + CF-AGT-003 | React/TS/Tailwind/Vite | codex/ (local) | Internal | 2026-06-25 |
 
 ---
 
@@ -22,7 +23,7 @@
 
 ### 1. Carriersfy AI Website
 - **Purpose:** Marketing website — lead generation, brand presence, contact form
-- **Repository:** `/Users/batman/Downloads/CARRIERSFY_AI_WEBSITE_V1.1_FINAL` (GitHub: lightofeternallifes-star)
+- **Repository:** `[repo root]` (GitHub: lightofeternallifes-star)
 - **Deployment:** Cloudflare Pages — auto-deploys from GitHub main branch
 - **Live URL:** https://carriersfy.ai
 - **Key Files:** `index.html`, `support.js`, `translations.js`, `functions/api/contact.js`

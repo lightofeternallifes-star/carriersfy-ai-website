@@ -128,6 +128,7 @@
 | ADR-007 | Analytics provider for website | CF Web Analytics, Plausible, PostHog | Juan | 2026-07-01 |
 | ADR-008 | CRM for lead / client tracking | HubSpot free, Notion DB, custom | Juan | 2026-07-15 |
 | ADR-009 | AI employee hosting platform | Which infra runs Iron Prime & Sofia | Juan | Q3 2026 |
+| ADR-010 | Blog / content engine architecture | Astro+MDX migration, Next.js, stay static | Juan | Q4 2026 |
 
 ---
 

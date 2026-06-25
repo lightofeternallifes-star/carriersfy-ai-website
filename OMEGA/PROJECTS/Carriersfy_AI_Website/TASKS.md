@@ -31,8 +31,9 @@
 
 ---
 
-### [P2] TASK-CF-001: Add Cloudflare Turnstile to Contact Form
+### [P2] TASK-011: Add Cloudflare Turnstile to Contact Form
 - **Status:** [BACKLOG]
+- **Canonical:** [TASK-011](../../CORE/TASK_ENGINE.md)
 - **Assigned:** Claude Code
 - **Due:** Q3 2026
 - **Description:** Add Turnstile CAPTCHA (Cloudflare's privacy-friendly CAPTCHA) to prevent spam leads from the contact form.
@@ -40,8 +41,9 @@
 
 ---
 
-### [P3] TASK-CF-002: Add hreflang Tags for PT/ES SEO
+### [P3] TASK-010: Add hreflang Tags for PT/ES SEO
 - **Status:** [BACKLOG]
+- **Canonical:** [TASK-010](../../CORE/TASK_ENGINE.md)
 - **Assigned:** Claude Code
 - **Due:** Q4 2026
 - **Description:** Current multilingual site has no hreflang meta tags. PT and ES visitors may not be discovered by Google for their language.
@@ -49,8 +51,9 @@
 
 ---
 
-### [P3] TASK-CF-003: Replace Placeholder Case Studies with Real Client Stories
+### [P3] TASK-012: Replace Placeholder Case Studies with Real Client Stories
 - **Status:** [BLOCKED]
+- **Canonical:** [TASK-012](../../CORE/TASK_ENGINE.md)
 - **Blocked by:** Client discovery meetings (TASK-002, TASK-003, TASK-004 in TASK_ENGINE)
 - **Assigned:** Juan + Claude Design
 - **Description:** Current case studies are placeholder content. Replace with real deliverables from Brazil Signs, Marine, Light of Life.

@@ -175,7 +175,7 @@ Every task entry must follow this structure:
 - **Created:** 2026-06-25
 - **Due:** Q4 2026
 - **Description:** Adding a blog requires migrating to Astro or similar framework. Evaluate and plan.
-- **Dependencies:** ADR decision on blog architecture
+- **Dependencies:** ADR-010 (blog architecture decision — see [DECISION_ENGINE](DECISION_ENGINE.md))
 
 #### TASK-010: Add hreflang Tags for PT/ES SEO
 - **Project:** [Carriersfy AI Website](../PROJECTS/Carriersfy_AI_Website/README.md)
@@ -186,6 +186,39 @@ Every task entry must follow this structure:
 - **Due:** Q4 2026
 - **Description:** Current multilingual implementation has no hreflang meta tags, limiting PT/ES SEO.
 - **Dependencies:** None
+
+#### TASK-011: Add Cloudflare Turnstile to Contact Form
+- **Project:** [Carriersfy AI Website](../PROJECTS/Carriersfy_AI_Website/README.md)
+- **Priority:** P2
+- **Status:** [BACKLOG]
+- **Assigned:** Claude Code
+- **Created:** 2026-06-25
+- **Due:** Q3 2026
+- **Description:** Add Cloudflare Turnstile CAPTCHA to the contact form to prevent spam lead submissions. Turnstile is Cloudflare's privacy-friendly alternative to reCAPTCHA — no cookie consent required.
+- **Acceptance Criteria:** Form protected with Turnstile. Spam submissions rejected server-side. Real lead conversions unaffected. Turnstile site key stored as Cloudflare Pages environment variable (never hardcoded).
+- **Dependencies:** None
+
+#### TASK-012: Replace Placeholder Case Studies with Real Client Stories
+- **Project:** [Carriersfy AI Website](../PROJECTS/Carriersfy_AI_Website/README.md)
+- **Priority:** P3
+- **Status:** [BLOCKED]
+- **Assigned:** Juan + Claude Design
+- **Created:** 2026-06-25
+- **Due:** Q4 2026
+- **Description:** Current case studies section in index.html contains placeholder content. Replace with real deliverables and measurable results from Brazil Signs, Marine Consolidated Electronics, and Light of Life.
+- **Acceptance Criteria:** At least two real client case studies live on the website. Each includes: client name (if permitted), use case, key result metric, and visual asset.
+- **Dependencies:** TASK-002, TASK-003, TASK-004 (client discovery meetings must complete first)
+
+#### TASK-013: Verify OMEGA Security Configuration
+- **Project:** [Internal Infrastructure](../PROJECTS/Internal_Infrastructure/README.md)
+- **Priority:** P1
+- **Status:** [IN PROGRESS]
+- **Assigned:** Claude Code
+- **Created:** 2026-06-25
+- **Due:** 2026-07-01
+- **Description:** Verify OMEGA directory is fully excluded from public access. Three-layer protection: (1) .gitignore excludes OMEGA/ from Git commits, (2) _headers blocks /OMEGA/* with no-store headers, (3) robots.txt disallows /OMEGA/ from crawlers.
+- **Acceptance Criteria:** OMEGA files do not appear in the GitHub repo. OMEGA files are not accessible at carriersfy.ai/OMEGA/*. robots.txt correctly disallows /OMEGA/.
+- **Dependencies:** .gitignore, _headers, and robots.txt must be committed and deployed.
 
 ---
 

@@ -126,6 +126,7 @@ Do not start a task without reading MASTER_CONTEXT.md. The cost of reading it is
 | Project CHANGELOG.md | After every release/deploy | Per release |
 | ROADMAP_ENGINE.md | Quarterly planning | Quarterly |
 | COMPANY_CONSTITUTION.md | Foundational changes only | Rarely |
+| KNOWLEDGE_GRAPH.md | New entity added or relationship changes | Per change |
 
 ---
 
@@ -154,18 +155,37 @@ Never duplicate. Always link.
 
 ---
 
-## Memory Scaling Rules
+## Conflict Resolution Protocol
 
-OMEGA is designed to scale to:
-- 1,000+ clients — each in `/CLIENTS/`
-- 500+ applications — each in `/PROJECTS/`
-- 100+ AI employees — each in `/AI/`
+When two OMEGA documents contain conflicting information, resolve in this order:
 
-To maintain performance at scale:
-- CORE files remain concise — registry files list and link, they do not contain full detail
-- Full detail lives in the leaf-level project/client/agent folder
-- MASTER_CONTEXT.md must remain readable in under 5 minutes regardless of scale
-- When a CORE registry grows beyond 50 entries, create sub-registries (e.g., `CLIENT_REGISTRY_US.md`, `CLIENT_REGISTRY_BR.md`)
+1. **Identify the source of truth** using the Single Source of Truth table above. The designated document wins.
+2. **Check timestamps** — if the source of truth is older than the conflicting document, update the source of truth to match the newer fact, then update all referencing documents.
+3. **Never leave a conflict unresolved** — document it in `CORE/MASTER_CONTEXT.md` under Current Priorities if it cannot be resolved in the same session.
+
+| Conflict Type | Resolution |
+|---|---|
+| Two documents show different project status | Trust `PROJECTS/[Name]/CURRENT_STATUS.md`; update PROJECT_REGISTRY and MASTER_CONTEXT to match |
+| Two documents show different client contact | Trust `CLIENTS/[Name]/Business_Profile.md`; update CLIENT_REGISTRY to match |
+| Two documents show different task status | Trust `CORE/TASK_ENGINE.md`; update project TASKS.md to match |
+| Two ADRs with the same ID | The lower-numbered (older) ADR wins. Re-ID the newer one and update all references. |
+
+---
+
+## Scaling Strategy
+
+OMEGA is architected to scale to 10,000+ projects and 100,000+ clients without structural changes:
+
+| Scale Threshold | Action Required |
+|---|---|
+| CLIENT_REGISTRY.md > 50 entries | Split into regional registries: `CLIENT_REGISTRY_US.md`, `CLIENT_REGISTRY_BR.md`, etc. |
+| PROJECT_REGISTRY.md > 50 entries | Split into type registries: `PROJECT_REGISTRY_INTERNAL.md`, `PROJECT_REGISTRY_CLIENT.md` |
+| TASK_ENGINE.md > 100 open tasks | Archive completed tasks to `ARCHIVE/TASK_ENGINE_[YEAR].md` and keep TASK_ENGINE.md current-only |
+| KNOWLEDGE_GRAPH.md > 200 nodes | Split into sub-graphs by domain: `KNOWLEDGE_GRAPH_CLIENTS.md`, `KNOWLEDGE_GRAPH_INFRA.md` |
+| Any CORE file > 500 lines | Review for content that belongs in leaf-level files and relocate; CORE files must stay scannable |
+| MASTER_CONTEXT.md read time > 5 min | Aggressively prune — move detail to sub-files and replace with links |
+
+**The CORE layer must always be fast to read.** As the business grows, complexity moves to the leaf level (client folders, project folders), not the CORE. If a CORE file is growing faster than leaf files, something is wrong.
 
 ---
 

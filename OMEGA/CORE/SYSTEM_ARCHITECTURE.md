@@ -160,7 +160,7 @@ User (admin/client) → Platform URL
 | Platform tech stack | Foundation of the entire platform | [ADR-006](DECISION_ENGINE.md) |
 | Database provider | Data persistence, scalability | [ADR-006](DECISION_ENGINE.md) |
 | AI employee hosting | Iron Prime + Sofia deployment | [ADR-009](DECISION_ENGINE.md) |
-| Rate limiting | Protect contact form from spam | [TASK-006 adjacent](TASK_ENGINE.md) |
+| Rate limiting | Protect contact form from spam | [TASK-011](TASK_ENGINE.md) |
 | Monitoring / alerting | Know when things break | [ADR pending] |
 
 ---
