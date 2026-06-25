@@ -1,0 +1,461 @@
+.cf-expansion {
+  --cf-bg: #070b16;
+  --cf-panel: rgba(255, 255, 255, 0.045);
+  --cf-panel-soft: rgba(255, 255, 255, 0.025);
+  --cf-line: rgba(255, 255, 255, 0.08);
+  --cf-line-strong: rgba(255, 255, 255, 0.14);
+  --cf-text: #f4f6fb;
+  --cf-muted: rgba(244, 246, 251, 0.62);
+  --cf-muted-soft: rgba(244, 246, 251, 0.5);
+  --cf-blue: #1fa2ff;
+  --cf-blue-deep: #1c7fd6;
+  --cf-red: #ff2e3c;
+  --cf-green: #35d6a0;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+  font-family: "Manrope", sans-serif;
+}
+
+.cf-expansion *,
+.cf-expansion *::before,
+.cf-expansion *::after {
+  box-sizing: border-box;
+}
+
+.cf-expansion::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(1100px 720px at 78% -8%, rgba(28, 127, 214, 0.26), transparent 60%),
+    radial-gradient(900px 720px at 6% 12%, rgba(31, 162, 255, 0.14), transparent 55%),
+    radial-gradient(760px 520px at 50% 112%, rgba(255, 46, 60, 0.16), transparent 60%),
+    radial-gradient(ellipse 130% 90% at 50% 45%, transparent 52%, rgba(0, 0, 0, 0.58) 100%);
+}
+
+.cf-expansion::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(120, 150, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 150, 255, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 28%, #000, transparent 78%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 28%, #000, transparent 78%);
+}
+
+@keyframes cfExpansionFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes cfExpansionGlow {
+  0%, 100% { opacity: 0.62; }
+  50% { opacity: 1; }
+}
+
+@keyframes cfExpansionSpin {
+  to { transform: rotate(360deg); }
+}
+
+.cf-page-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.cf-section {
+  padding: clamp(70px, 9vw, 130px) clamp(20px, 5vw, 56px);
+}
+
+.cf-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.cf-kicker {
+  margin-bottom: 16px;
+  color: var(--cf-blue);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.cf-kicker-red {
+  color: var(--cf-red);
+}
+
+.cf-title {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(30px, 4.2vw, 56px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.cf-hero-title {
+  max-width: 900px;
+  font-size: clamp(44px, 6.8vw, 86px);
+  line-height: 0.99;
+  letter-spacing: -0.035em;
+}
+
+.cf-gradient-text {
+  background: linear-gradient(110deg, #3fb0ff, var(--cf-blue-deep) 42%, var(--cf-red));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cf-copy {
+  color: var(--cf-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.cf-hero-copy {
+  max-width: 620px;
+  margin: 26px 0 0;
+  font-size: clamp(16.5px, 1.55vw, 20px);
+}
+
+.cf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--cf-min, 280px), 100%), 1fr));
+  gap: var(--cf-gap, 20px);
+}
+
+.cf-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  gap: clamp(40px, 5vw, 72px);
+  align-items: center;
+}
+
+.cf-card {
+  border: 1px solid var(--cf-line);
+  border-radius: 22px;
+  background: linear-gradient(180deg, var(--cf-panel), rgba(255, 255, 255, 0.015));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(20px);
+}
+
+.cf-card-pad {
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.cf-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 246, 251, 0.82);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cf-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cf-green);
+  box-shadow: 0 0 12px var(--cf-green);
+}
+
+.cf-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 38px;
+}
+
+.cf-primary-button,
+.cf-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 15px 28px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-size: 15.5px;
+  font-weight: 700;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.cf-primary-button {
+  color: var(--cf-bg);
+  background: linear-gradient(135deg, var(--cf-blue), var(--cf-red));
+  box-shadow: 0 10px 40px rgba(28, 127, 214, 0.4);
+  border: 0;
+}
+
+.cf-secondary-button {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cf-line-strong);
+  backdrop-filter: blur(20px);
+}
+
+.cf-primary-button:hover,
+.cf-secondary-button:hover {
+  transform: translateY(-2px);
+}
+
+.cf-icon-tile {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  background: rgba(31, 162, 255, 0.12);
+  border: 1px solid rgba(31, 162, 255, 0.25);
+  color: #fff;
+  font-size: 22px;
+}
+
+.cf-red-tile {
+  background: rgba(255, 46, 60, 0.12);
+  border-color: rgba(255, 46, 60, 0.25);
+}
+
+.cf-card h3 {
+  margin: 0 0 10px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.cf-card p,
+.cf-card li {
+  color: var(--cf-muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.cf-orb-stage {
+  position: relative;
+  min-height: clamp(500px, 56vw, 680px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cf-orb {
+  position: relative;
+  width: min(440px, 86%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(190, 230, 255, 0.38), rgba(31, 162, 255, 0.16) 34%, rgba(28, 127, 214, 0.04) 58%, transparent 72%),
+    conic-gradient(from 0deg, rgba(31, 162, 255, 0.72), rgba(255, 46, 60, 0.58), rgba(31, 162, 255, 0.72));
+  box-shadow:
+    0 0 64px rgba(31, 162, 255, 0.3),
+    inset 0 0 80px rgba(7, 11, 22, 0.9);
+  animation: cfExpansionFloat 6.2s ease-in-out infinite;
+}
+
+.cf-orb::before,
+.cf-orb::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px dashed rgba(190, 215, 255, 0.34);
+}
+
+.cf-orb::after {
+  inset: 22%;
+  border-color: rgba(255, 46, 60, 0.34);
+  animation: cfExpansionSpin 18s linear infinite;
+}
+
+.cf-orb-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.cf-orb-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(31, 162, 255, 0.7);
+}
+
+.cf-orb-role {
+  margin-top: 8px;
+  color: rgba(190, 215, 255, 0.82);
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.cf-metric-card {
+  position: absolute;
+  width: clamp(150px, 15vw, 190px);
+  padding: 15px 17px;
+  border-radius: 14px;
+  border: 1px solid rgba(31, 162, 255, 0.32);
+  background: linear-gradient(180deg, rgba(13, 18, 32, 0.9), rgba(8, 11, 20, 0.9));
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.55), 0 0 26px rgba(31, 162, 255, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.cf-metric-card strong {
+  display: block;
+  margin-top: 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 28px;
+}
+
+.cf-metric-card span {
+  color: rgba(185, 212, 255, 0.7);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cf-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 14px;
+}
+
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cf-field label {
+  color: rgba(244, 246, 251, 0.7);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cf-input,
+.cf-select,
+.cf-textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-family: "Manrope", sans-serif;
+  font-size: 14.5px;
+  outline: none;
+  padding: 13px 15px;
+}
+
+.cf-textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.cf-option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 12px;
+}
+
+.cf-chip {
+  border: 1px solid var(--cf-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #fff;
+  cursor: pointer;
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.cf-chip-active {
+  border-color: rgba(31, 162, 255, 0.58);
+  background: linear-gradient(135deg, rgba(31, 162, 255, 0.18), rgba(255, 46, 60, 0.12));
+}
+
+.cf-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--cf-muted);
+  font-size: 14px;
+}
+
+.cf-summary-row strong {
+  color: #fff;
+  text-align: right;
+}
+
+.cf-placeholder {
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(244, 246, 251, 0.54);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .cf-hero-title {
+    font-size: clamp(40px, 12vw, 58px);
+  }
+
+  .cf-metric-card {
+    position: static;
+    width: 100%;
+  }
+
+  .cf-orb-stage {
+    min-height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-top: 28px;
+  }
+
+  .cf-orb {
+    justify-self: center;
+    margin-bottom: 18px;
+  }
+}
