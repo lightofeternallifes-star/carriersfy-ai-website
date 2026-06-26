@@ -78,6 +78,9 @@
       '#cf-voice-fallback{text-align:center;font-size:14px;line-height:1.65;color:rgba(244,246,251,.6);padding:8px 0;}',
       '#cf-voice-fallback a{color:#1FA2FF;text-decoration:none;cursor:pointer;}',
       '#cf-voice-fallback a:hover{text-decoration:underline;}',
+      '#cf-voice-phone{margin-top:2px;text-align:center;font-size:13px;min-height:20px;}',
+      '#cf-voice-phone a{color:#35D6A0;text-decoration:none;font-weight:600;}',
+      '#cf-voice-phone a:hover{text-decoration:underline;}',
     ].join('');
     document.head.appendChild(s);
   }
@@ -130,6 +133,7 @@
             '</div>',
           ].join('')
         : '<div id="cf-voice-fallback">' + L('notSupported') + '</div>',
+      '<div id="cf-voice-phone"></div>',
       '</div>',
     ].join('');
 
@@ -290,6 +294,19 @@
     state.history = [];
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+
+    // Show direct phone link if VOICE_PHONE is configured (via /api/config → sophia-channels.js)
+    var phoneDiv = $('cf-voice-phone');
+    if (phoneDiv) {
+      var voiceCfg = window.CF_SOPHIA_CONFIG;
+      if (voiceCfg && voiceCfg.voicePhone) {
+        var pLbls = { pt: 'ou ligue direto:', es: 'o llama directamente:', en: 'or call directly:' };
+        phoneDiv.innerHTML = '<span style="color:rgba(244,246,251,.45);font-size:12px;">' + (pLbls[state.lang] || pLbls.en) + '</span> <a href="tel:+' + voiceCfg.voicePhone + '">+' + voiceCfg.voicePhone + '</a>';
+      } else {
+        phoneDiv.innerHTML = '';
+      }
+    }
+
     if (!SUPPORTED) return;
     // Ensure voices are loaded before speaking
     var trySpeak = function () {

@@ -85,10 +85,9 @@
     dock.appendChild(waBtn);
     document.body.appendChild(dock);
 
-    // Expose WhatsApp phone globally so sophia-chat.js action buttons also work
-    if (cfg.whatsappPhone) {
-      window.CF_SOPHIA_WHATSAPP_PHONE = cfg.whatsappPhone;
-    }
+    // Expose full config globally so other scripts (sophia-voice.js, sophia-chat.js) can use it
+    window.CF_SOPHIA_CONFIG = cfg;
+    if (cfg.whatsappPhone) window.CF_SOPHIA_WHATSAPP_PHONE = cfg.whatsappPhone;
   }
 
   function prefillContact(message) {
