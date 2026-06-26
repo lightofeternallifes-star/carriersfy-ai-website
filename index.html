@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="translations.js"></script>
+<script src="./employee-builder.js" defer></script>
+<script src="./app-builder.js" defer></script>
 <style>
   *{box-sizing:border-box;-webkit-font-smoothing:antialiased;}
   html{scroll-behavior:smooth;}
@@ -34,9 +36,18 @@
   @keyframes cfglow{0%,100%{opacity:.65;}50%{opacity:1;}}
   @keyframes cfbreath{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,46,60,.42)) drop-shadow(0 0 6px rgba(31,162,255,.38));}50%{transform:scale(1.06);filter:drop-shadow(0 0 17px rgba(255,46,60,.72)) drop-shadow(0 0 13px rgba(31,162,255,.66));}}
   @keyframes cfbreathin{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5;}50%{transform:translate(-50%,-50%) scale(1.07);opacity:.72;}}
+  @keyframes cfsophiapulse{0%,100%{box-shadow:0 10px 40px rgba(28,127,214,.38),0 0 0 0 rgba(31,162,255,.26);}50%{box-shadow:0 14px 48px rgba(255,46,60,.28),0 0 0 9px rgba(31,162,255,0);}}
   [data-reveal]{opacity:1;transform:none;}
   [data-navlinks]{display:flex;}
   [data-burger]{display:none;}
+  #cf-sophia-launcher{position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:75;display:flex;align-items:center;gap:11px;padding:12px 18px 12px 12px;border-radius:100px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);border:0;color:#070B16;font-family:'Manrope',sans-serif;font-size:14.5px;font-weight:800;cursor:pointer;animation:cfsophiapulse 3.6s ease-in-out infinite;transition:transform .25s ease,filter .25s ease;}
+  #cf-sophia-launcher:hover{transform:translateY(-2px);filter:brightness(1.06);}
+  #cf-sophia-launcher:focus-visible{outline:3px solid rgba(244,246,251,.9);outline-offset:4px;}
+  #cf-sophia-launcher-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#070B16;color:#F4F6FB;font-family:'Space Grotesk';font-size:16px;font-weight:700;box-shadow:0 0 18px rgba(255,255,255,.28);}
+  @media(max-width:760px){
+    #cf-sophia-launcher{left:50%;right:auto;bottom:16px;transform:translateX(-50%);white-space:nowrap;}
+    #cf-sophia-launcher:hover{transform:translateX(-50%) translateY(-2px);}
+  }
   @media(max-width:880px){
     [data-navlinks]{display:none;}
     [data-burger]{display:flex;}
@@ -60,6 +71,11 @@
   <div style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:linear-gradient(rgba(120,150,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 78%);mask-image:radial-gradient(ellipse 80% 60% at 50% 28%,#000,transparent 78%);"></div>
   <div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 130% 90% at 50% 45%,transparent 52%,rgba(0,0,0,.58) 100%);"></div>
 
+  <button id="cf-sophia-launcher" type="button" onClick="{{ openSophia }}" aria-haspopup="dialog" aria-controls="cf-sophia-modal" aria-label="Chat with Sophia, Carriersfy AI employee">
+    <span id="cf-sophia-launcher-avatar" aria-hidden="true">S</span>
+    <span>Chat with Sophia</span>
+  </button>
+
   <!-- NAV -->
   <nav id="cf-nav" style="position:fixed;top:0;left:0;right:0;z-index:60;transition:all .4s ease;border-bottom:1px solid transparent;">
     <div style="max-width:1280px;margin:0 auto;padding:18px clamp(20px,5vw,56px);display:flex;align-items:center;justify-content:space-between;gap:24px;">
@@ -82,7 +98,7 @@
             <button onClick="{{ setPt }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border-radius:10px;background:none;border:none;color:#fff;font-size:14px;cursor:pointer;text-align:left;"><span style="font-size:17px;">🇧🇷</span><b style="font-weight:700;width:22px;">PT</b><span style="color:rgba(244,246,251,.6);">Português</span></button>
           </div>
         </div>
-        <a data-navcta href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:14px;padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 6px 24px rgba(28,127,214,.35);">Get Your AI Employee</a>
+        <a data-navcta data-employee-factory-open href="#digital-employee-factory" style="text-decoration:none;color:#070B16;font-weight:700;font-size:14px;padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 6px 24px rgba(28,127,214,.35);">Get Your AI Employee</a>
         <button data-burger onClick="{{ toggleMenu }}" aria-label="Menu" style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
           <span style="width:16px;height:1.6px;background:#fff;display:block;"></span>
           <span style="width:16px;height:1.6px;background:#fff;display:block;"></span>
@@ -101,7 +117,7 @@
     <a href="#industries" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Industries</a>
     <a href="#cases" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Case Studies</a>
     <a href="#process" onClick="{{ closeMenu }}" style="color:#fff;text-decoration:none;font-family:'Space Grotesk';font-size:30px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);">Process</a>
-    <a href="#contact" onClick="{{ closeMenu }}" style="margin-top:32px;text-align:center;text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);">Get Your AI Employee</a>
+    <a data-employee-factory-open href="#digital-employee-factory" onClick="{{ closeMenu }}" style="margin-top:32px;text-align:center;text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);">Get Your AI Employee</a>
   </div>
 
   <!-- HERO -->
@@ -127,7 +143,7 @@
           Carriersfy AI designs and deploys digital employees that answer calls, serve customers, qualify leads, generate sales opportunities and work 24/7 for your business.
         </p>
         <div data-reveal style="display:flex;flex-wrap:wrap;gap:16px;">
-          <a href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:15.5px;padding:16px 30px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 10px 40px rgba(28,127,214,.4);transition:transform .35s ease,box-shadow .35s ease;display:inline-flex;align-items:center;gap:10px;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
+          <a data-employee-factory-open href="#digital-employee-factory" style="text-decoration:none;color:#070B16;font-weight:700;font-size:15.5px;padding:16px 30px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 10px 40px rgba(28,127,214,.4);transition:transform .35s ease,box-shadow .35s ease;display:inline-flex;align-items:center;gap:10px;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
           <a href="#contact" style="text-decoration:none;color:#fff;font-weight:600;font-size:15.5px;padding:16px 30px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);transition:all .3s ease;" style-hover="background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.3);transform:translateY(-2px);">Book a Strategy Call</a>
         </div>
       </div>
@@ -541,6 +557,7 @@
         <div style="font-size:13px;font-weight:700;letter-spacing:.16em;color:#1FA2FF;margin-bottom:16px;">GET STARTED</div>
         <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;">Tell us about your business</h2>
         <p style="font-size:17px;line-height:1.6;color:rgba(244,246,251,.62);margin:0 0 30px;max-width:520px;">Share a few details and we'll show you exactly how an AI employee would work for your business — with a clear plan and no pressure.</p>
+        <div aria-label="Powered by Sophia" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;padding:8px 14px;border-radius:100px;background:rgba(31,162,255,.08);border:1px solid rgba(31,162,255,.22);font-size:13px;font-weight:700;color:rgba(244,246,251,.82);"><span style="width:7px;height:7px;border-radius:50%;background:#35D6A0;box-shadow:0 0 10px #35D6A0;"></span>Powered by Sophia</div>
         <div style="display:flex;flex-wrap:wrap;gap:12px;">
           <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13.5px;font-weight:600;"><span style="color:#1FA2FF;">✓</span>Free strategy call</span>
           <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:13.5px;font-weight:600;"><span style="color:#1FA2FF;">✓</span>Live in ~14 days</span>
@@ -553,7 +570,11 @@
       </div>
       <div data-reveal style="border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);padding:clamp(26px,3vw,36px);box-shadow:0 30px 80px rgba(0,0,0,.4);position:relative;overflow:hidden;">
         <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(28,127,214,.35),transparent 70%);filter:blur(24px);pointer-events:none;"></div>
-        <form id="cf-form" onSubmit="{{ submitContact }}" style="position:relative;display:flex;flex-direction:column;gap:18px;">
+        <form id="cf-form" data-sophia-pipeline="website-to-sophia" onSubmit="{{ submitContact }}" style="position:relative;display:flex;flex-direction:column;gap:18px;">
+          <div aria-label="Lead form powered by Sophia" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);">
+            <span style="font-family:'Space Grotesk';font-size:14px;font-weight:700;color:#F4F6FB;">Powered by Sophia</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#35D6A0;"><span style="width:6px;height:6px;border-radius:50%;background:#35D6A0;box-shadow:0 0 8px #35D6A0;"></span>Online</span>
+          </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div>
               <label for="cf-name" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Name</label>
@@ -611,7 +632,7 @@
         <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(32px,5vw,60px);line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;">Your AI employee is ready<br>to start working today</h2>
         <p style="font-size:18px;line-height:1.6;color:rgba(244,246,251,.7);max-width:560px;margin:0 auto 36px;">Join the businesses building the future workforce with Carriersfy AI. Book a strategy call and see your digital employee in action.</p>
         <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
-          <a href="#contact" style="text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:17px 34px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 12px 44px rgba(28,127,214,.45);transition:transform .3s ease,box-shadow .3s ease;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
+          <a data-employee-factory-open href="#digital-employee-factory" style="text-decoration:none;color:#070B16;font-weight:700;font-size:16px;padding:17px 34px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 12px 44px rgba(28,127,214,.45);transition:transform .3s ease,box-shadow .3s ease;" style-hover="transform:translateY(-2px);box-shadow:0 18px 56px rgba(28,127,214,.6);">Get Your AI Employee →</a>
           <a href="#contact" style="text-decoration:none;color:#fff;font-weight:600;font-size:16px;padding:17px 34px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);transition:all .3s ease;" style-hover="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);">Book a Strategy Call</a>
         </div>
       </div>
@@ -624,6 +645,7 @@
       <div style="max-width:300px;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="display:flex;align-items:center;"><img src="assets/carriersfy-emblem.png" alt="Carriersfy AI" style="height:40px;width:auto;display:block;filter:drop-shadow(0 0 9px rgba(255,46,60,.4));"></span><span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;letter-spacing:.04em;">CARRIERSFY <span style="color:#FF2E3C;font-weight:700;">AI</span></span></div>
         <p style="font-size:14px;line-height:1.6;color:rgba(244,246,251,.5);margin:0;">Where business meets artificial intelligence. Building AI employees that work 24/7.</p>
+        <div aria-label="Powered by Sophia" style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:8px 13px;border-radius:100px;background:rgba(31,162,255,.08);border:1px solid rgba(31,162,255,.2);font-size:12.5px;font-weight:700;color:rgba(244,246,251,.72);"><span style="width:6px;height:6px;border-radius:50%;background:#35D6A0;box-shadow:0 0 8px #35D6A0;"></span>Powered by Sophia</div>
         <a href="mailto:hello@carriersfy.ai" style="display:inline-flex;align-items:center;gap:9px;margin-top:18px;text-decoration:none;font-size:14px;font-weight:600;color:#F4F6FB;" style-hover="color:#1FA2FF;"><span style="color:#1FA2FF;">✉</span>hello@carriersfy.ai</a>
       </div>
       <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:16px;">Platform</div><div style="display:flex;flex-direction:column;gap:11px;"><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">AI Workforce</a><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Voice Agents</a><a href="#platform" style="color:rgba(244,246,251,.5);text-decoration:none;font-size:14px;">Integrations</a></div></div>
@@ -653,6 +675,7 @@ class Component extends DCLogic {
         setEn: () => this.setLang('en'),
         setEs: () => this.setLang('es'),
         setPt: () => this.setLang('pt'),
+        openSophia: () => this.openSophiaModal(),
         submitContact: (e) => this.handleContact(e),
       };
     }
@@ -683,6 +706,153 @@ class Component extends DCLogic {
     }
   }
 
+  async openSophiaModal() {
+    const modal = this.ensureSophiaModal();
+    this._sophiaLastFocus = document.activeElement;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    const close = document.getElementById('cf-sophia-close');
+    if (close) close.focus();
+    await this.updateSophiaWhatsAppLink();
+  }
+
+  closeSophiaModal() {
+    const modal = document.getElementById('cf-sophia-modal');
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (this._sophiaLastFocus && this._sophiaLastFocus.focus) this._sophiaLastFocus.focus();
+  }
+
+  ensureSophiaModal() {
+    let modal = document.getElementById('cf-sophia-modal');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'cf-sophia-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-labelledby', 'cf-sophia-title');
+    modal.style.cssText = 'display:none;position:fixed;inset:0;z-index:120;align-items:center;justify-content:center;padding:24px;background:rgba(7,11,22,.76);backdrop-filter:blur(22px);';
+    modal.innerHTML = `
+      <div id="cf-sophia-dialog" style="width:min(620px,100%);max-height:min(760px,calc(100vh - 48px));overflow:auto;border-radius:26px;background:linear-gradient(180deg,rgba(13,18,32,.98),rgba(8,11,20,.98));border:1px solid rgba(255,255,255,.13);box-shadow:0 40px 110px rgba(0,0,0,.68);position:relative;">
+        <div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(31,162,255,.34),transparent 70%);filter:blur(28px);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-100px;left:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,46,60,.22),transparent 70%);filter:blur(30px);pointer-events:none;"></div>
+        <div style="position:relative;padding:clamp(26px,5vw,42px);">
+          <button id="cf-sophia-close" type="button" aria-label="Close Sophia chat" style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#fff;font-size:22px;line-height:1;cursor:pointer;">x</button>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-right:48px;">
+            <div aria-hidden="true" style="width:70px;height:70px;border-radius:22px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#070B16;box-shadow:0 0 36px rgba(28,127,214,.45);">S</div>
+            <div>
+              <h2 id="cf-sophia-title" style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,38px);line-height:1.05;letter-spacing:-.02em;margin:0;">Sophia</h2>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:9px;color:#35D6A0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;"><span style="width:8px;height:8px;border-radius:50%;background:#35D6A0;box-shadow:0 0 10px #35D6A0;"></span>Online</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px;" aria-label="Sophia supported languages">
+            <span style="padding:8px 12px;border-radius:100px;background:rgba(31,162,255,.1);border:1px solid rgba(31,162,255,.24);font-size:13px;font-weight:700;">English</span>
+            <span style="padding:8px 12px;border-radius:100px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11);font-size:13px;font-weight:700;">Spanish</span>
+            <span style="padding:8px 12px;border-radius:100px;background:rgba(255,46,60,.1);border:1px solid rgba(255,46,60,.24);font-size:13px;font-weight:700;">Portuguese</span>
+          </div>
+          <p style="font-size:17px;line-height:1.65;color:rgba(244,246,251,.74);margin:0 0 28px;">I help companies build AI Employees, AI Applications, Business Automation, Voice AI, WhatsApp AI and Enterprise Platforms.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:12px;">
+            <a id="cf-sophia-whatsapp" href="#" target="_blank" rel="noopener" data-sophia-action="whatsapp" style="text-align:center;text-decoration:none;color:#070B16;font-weight:800;font-size:14.5px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1FA2FF,#FF2E3C);box-shadow:0 10px 34px rgba(28,127,214,.34);">Start WhatsApp</a>
+            <a href="#contact" data-sophia-intent="Request Demo" style="text-align:center;text-decoration:none;color:#fff;font-weight:700;font-size:14.5px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);">Request Demo</a>
+            <a href="#contact" data-sophia-intent="Book Strategy Call" style="text-align:center;text-decoration:none;color:#fff;font-weight:700;font-size:14.5px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);">Book Strategy Call</a>
+            <a href="#digital-employee-factory" data-employee-factory-open data-sophia-intent="Build My AI Employee" style="text-align:center;text-decoration:none;color:#fff;font-weight:700;font-size:14.5px;padding:14px 16px;border-radius:14px;background:rgba(31,162,255,.08);border:1px solid rgba(31,162,255,.2);">Build My AI Employee</a>
+            <a href="#app-builder" data-app-builder-open data-sophia-intent="Build My App" style="text-align:center;text-decoration:none;color:#fff;font-weight:700;font-size:14.5px;padding:14px 16px;border-radius:14px;background:rgba(255,46,60,.08);border:1px solid rgba(255,46,60,.2);">Build My App</a>
+          </div>
+          <div style="margin-top:22px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);font-size:12.5px;line-height:1.5;color:rgba(244,246,251,.56);">Powered by Sophia through the Carriersfy AI Platform. Available 24/7 in English, Spanish, and Portuguese.</div>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    const close = document.getElementById('cf-sophia-close');
+    if (close) close.addEventListener('click', () => this.closeSophiaModal());
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) this.closeSophiaModal();
+    });
+    modal.querySelectorAll('[data-sophia-intent]').forEach((el) => {
+      el.addEventListener('click', (event) => {
+        if (el.hasAttribute('data-employee-factory-open') || el.hasAttribute('data-app-builder-open')) {
+          this._sophiaIntent = el.getAttribute('data-sophia-intent') || '';
+          this.closeSophiaModal();
+          return;
+        }
+        this.setSophiaLeadIntent(el.getAttribute('data-sophia-intent') || '');
+        this.closeSophiaModal();
+      });
+    });
+    this._sophiaKeyHandler = (event) => {
+      const activeModal = document.getElementById('cf-sophia-modal');
+      if (!activeModal || activeModal.style.display === 'none') return;
+      if (event.key === 'Escape') this.closeSophiaModal();
+      if (event.key === 'Tab') {
+        const focusable = Array.from(activeModal.querySelectorAll('a[href],button:not([disabled])'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', this._sophiaKeyHandler);
+    return modal;
+  }
+
+  async loadSophiaWebsiteConfig() {
+    if (this._sophiaWebsiteConfig) return this._sophiaWebsiteConfig;
+    const cfg = {
+      phonePlaceholder: 'CARRIERSFY_WHATSAPP_PHONE',
+      defaultMessage: 'Hi Sophia, I want to build an AI employee or AI app for my business.',
+      urlTemplate: 'https://wa.me/{CARRIERSFY_WHATSAPP_PHONE}?text={ENCODED_MESSAGE}',
+    };
+    try {
+      const res = await fetch('config/sophia.config.ts', { cache: 'no-store' });
+      if (res.ok) {
+        const text = await res.text();
+        const phone = text.match(/phonePlaceholder:\s*"([^"]+)"/);
+        const msg = text.match(/defaultMessage:\s*"([^"]+)"/);
+        const url = text.match(/urlTemplate:\s*"([^"]+)"/);
+        if (phone) cfg.phonePlaceholder = phone[1];
+        if (msg) cfg.defaultMessage = msg[1];
+        if (url) cfg.urlTemplate = url[1];
+      }
+    } catch (err) {
+      console.warn('[Sophia] Config fetch unavailable; using configured placeholders.', err);
+    }
+    this._sophiaWebsiteConfig = cfg;
+    return cfg;
+  }
+
+  async updateSophiaWhatsAppLink() {
+    const link = document.getElementById('cf-sophia-whatsapp');
+    if (!link) return;
+    const cfg = await this.loadSophiaWebsiteConfig();
+    const runtimePhone = window.CF_SOPHIA_WHATSAPP_PHONE || cfg.phonePlaceholder;
+    const href = cfg.urlTemplate
+      .replace('{CARRIERSFY_WHATSAPP_PHONE}', encodeURIComponent(runtimePhone))
+      .replace('{ENCODED_MESSAGE}', encodeURIComponent(cfg.defaultMessage));
+    link.setAttribute('href', href);
+    link.setAttribute('aria-label', 'Start WhatsApp chat with Sophia');
+  }
+
+  setSophiaLeadIntent(intent) {
+    this._sophiaIntent = intent || 'Website Contact';
+    const msg = document.getElementById('cf-message');
+    if (msg && !msg.value) msg.value = 'Sophia request: ' + this._sophiaIntent;
+    setTimeout(() => {
+      const contact = document.getElementById('contact');
+      if (contact) contact.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 40);
+  }
+
   async handleContact(e) {
     if (e && e.preventDefault) e.preventDefault();
     const form = document.getElementById('cf-form');
@@ -697,6 +867,17 @@ class Component extends DCLogic {
       phone:    (document.getElementById('cf-phone')?.value || '').trim(),
       industry: (document.getElementById('cf-industry')?.value || ''),
       message:  (document.getElementById('cf-message')?.value || '').trim(),
+      sophiaPipeline: {
+        owner: 'Sophia',
+        source: 'website',
+        status: 'new',
+        intent: this._sophiaIntent || 'Website Contact',
+        routingQueue: 'carriersfy-ai-inbound-leads',
+        flow: ['website', 'sophia', 'crm_placeholder', 'email_notification', 'whatsapp_notification', 'appointment_placeholder'],
+        crmStatus: 'prepared_not_connected',
+        whatsappStatus: 'prepared_not_connected',
+        appointmentStatus: 'prepared_not_connected',
+      },
     };
 
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
@@ -792,6 +973,7 @@ class Component extends DCLogic {
     if (this._revealCheck) { window.removeEventListener('scroll', this._revealCheck); window.removeEventListener('resize', this._revealCheck); }
     if (this._io) this._io.disconnect();
     if (this._counterIO) this._counterIO.disconnect();
+    if (this._sophiaKeyHandler) document.removeEventListener('keydown', this._sophiaKeyHandler);
   }
 
   initNav() {
@@ -813,7 +995,7 @@ class Component extends DCLogic {
   }
 
   initReveal() {
-    // Entrance reveal is driven purely by the [data-reveal] CSS animation (survives React re-renders).
+    // Entrance reveal is driven by the [data-reveal] CSS animation.
     // Here we only handle the count-up numbers, with a robust manual viewport check + safety net.
     const countEls = Array.from(document.querySelectorAll('[data-count]'));
     const fireCount = (el) => {
@@ -1029,5 +1211,8 @@ class Component extends DCLogic {
   }
 }
 </script>
+<script src="/sophia-chat.js" defer></script>
+<script src="/sophia-voice.js" defer></script>
+<script src="/sophia-channels.js" defer></script>
 </body>
 </html>
