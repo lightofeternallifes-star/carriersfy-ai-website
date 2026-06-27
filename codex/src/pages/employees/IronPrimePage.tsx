@@ -1,6 +1,6 @@
 import { EmployeePage } from '../../components/employees/EmployeePage'
 import { ironPrime } from '../../data/employees'
 
-export function IronPrimePage() {
+export default function IronPrimePage() {
   return <EmployeePage employee={ironPrime} />
 }
