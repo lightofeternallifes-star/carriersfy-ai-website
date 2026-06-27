@@ -190,6 +190,103 @@ function buildEmailText(data) {
   ].join('\n');
 }
 
+// ─── GHL Direct API ───────────────────────────────────────────────────────────
+// Creates/updates a contact in GoHighLevel via REST API.
+// Activates when GHL_API_KEY + GHL_LOCATION_ID env vars are both set.
+// Falls back to webhook-only when credentials are missing.
+
+async function upsertGHLContact(env, data) {
+  const apiKey = env.GHL_API_KEY;
+  const locationId = env.GHL_LOCATION_ID;
+  if (!apiKey || !locationId) return null;
+
+  const nameParts = (data.name || '').trim().split(/\s+/);
+  const tags = ['website-lead', 'sophia-qualified'];
+  if (data.industry) tags.push(data.industry.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
+  if (data.qualificationStage) tags.push(`stage-${data.qualificationStage}`);
+
+  const contactPayload = {
+    firstName: nameParts[0] || data.name,
+    lastName: nameParts.slice(1).join(' ') || '',
+    email: data.email,
+    locationId,
+    source: 'carriersfy-ai-website',
+    tags,
+  };
+
+  if (data.phone) {
+    const digits = data.phone.replace(/\D/g, '');
+    contactPayload.phone = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+  }
+  if (data.business) contactPayload.companyName = data.business;
+
+  try {
+    // Try to find existing contact first
+    const searchRes = await fetch(
+      `https://services.leadconnectorhq.com/contacts/?locationId=${locationId}&email=${encodeURIComponent(data.email)}`,
+      { headers: { 'Authorization': `Bearer ${apiKey}`, 'Version': '2021-07-28' } }
+    );
+
+    let contactId = null;
+
+    if (searchRes.ok) {
+      const searchData = await searchRes.json();
+      const existing = searchData?.contacts?.[0];
+      if (existing?.id) {
+        // Update existing contact
+        await fetch(`https://services.leadconnectorhq.com/contacts/${existing.id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Version': '2021-07-28', 'Content-Type': 'application/json' },
+          body: JSON.stringify(contactPayload),
+        });
+        contactId = existing.id;
+        console.info('[contact] GHL contact updated:', contactId);
+      }
+    }
+
+    if (!contactId) {
+      // Create new contact
+      const createRes = await fetch('https://services.leadconnectorhq.com/contacts/', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Version': '2021-07-28', 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactPayload),
+      });
+      if (createRes.ok) {
+        const created = await createRes.json();
+        contactId = created?.contact?.id;
+        console.info('[contact] GHL contact created:', contactId);
+      } else {
+        const errText = await createRes.text();
+        console.error('[contact] GHL create error:', createRes.status, errText);
+      }
+    }
+
+    // Add conversation note with transcript + qualification
+    if (contactId) {
+      const noteLines = [];
+      if (data.industry) noteLines.push(`Industry: ${data.industry}`);
+      if (data.recommendedService) noteLines.push(`Recommended: ${data.recommendedService}`);
+      if (data.problem) noteLines.push(`Pain Point: ${data.problem}`);
+      if (data.urgency) noteLines.push(`Urgency: ${data.urgency}`);
+      if (data.qualificationStage) noteLines.push(`Qualification Stage: ${data.qualificationStage}`);
+      if (data.transcript) noteLines.push('\n--- Sophia Chat Transcript ---\n' + data.transcript);
+
+      if (noteLines.length > 0) {
+        await fetch(`https://services.leadconnectorhq.com/contacts/${contactId}/notes`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Version': '2021-07-28', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body: noteLines.join('\n') }),
+        });
+      }
+    }
+
+    return contactId;
+  } catch (err) {
+    console.error('[contact] GHL API failed (non-blocking):', err);
+    return null;
+  }
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -252,7 +349,23 @@ export async function onRequestPost(context) {
     return json({ error: 'Email delivery failed' }, 500);
   }
 
-  // Forward to GoHighLevel CRM if webhook is configured
+  // GHL Direct API — create/update contact + add note with transcript
+  // Activates when GHL_API_KEY + GHL_LOCATION_ID are set in Cloudflare Pages env vars
+  const ghlContactId = await upsertGHLContact(env, {
+    name,
+    email,
+    phone: (data.phone || '').trim(),
+    business: data.business || '',
+    industry: data.industry || '',
+    problem: data.problem || '',
+    recommendedService: data.recommendedService || '',
+    qualificationStage: data.qualificationStage || '',
+    urgency: data.urgency || '',
+    transcript: data.transcript || data.message || '',
+  });
+
+  // GHL Webhook — enhanced payload for automation workflows
+  // Activates when GHL_WEBHOOK_URL is set in Cloudflare Pages env vars
   const GHL_WEBHOOK_URL = env.GHL_WEBHOOK_URL;
   if (GHL_WEBHOOK_URL) {
     const nameParts = name.trim().split(/\s+/);
@@ -262,12 +375,22 @@ export async function onRequestPost(context) {
       name,
       email,
       phone: (data.phone || '').trim(),
+      company: data.business || '',
       message: (data.message || '').trim(),
-      source: 'website-sophia',
+      source: 'carriersfy-ai-website',
+      sourceDetail: 'sophia-chat',
+      industry: data.industry || '',
+      problem: data.problem || '',
+      recommendedService: data.recommendedService || '',
+      qualificationStage: data.qualificationStage || '',
+      urgency: data.urgency || '',
+      transcript: data.transcript || '',
+      ghlContactId: ghlContactId || '',
       tags: [
         'website-lead',
         'sophia-qualified',
-        ...(data.industry ? [data.industry.toLowerCase().replace(/\s+/g, '-')] : []),
+        ...(data.industry ? [data.industry.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')] : []),
+        ...(data.qualificationStage ? [`stage-${data.qualificationStage}`] : []),
       ],
     };
     try {
@@ -276,7 +399,7 @@ export async function onRequestPost(context) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(ghlPayload),
       });
-      console.info('[contact] GHL CRM record created for:', name);
+      console.info('[contact] GHL webhook fired for:', name);
     } catch (ghlErr) {
       console.error('[contact] GHL webhook failed (non-blocking):', ghlErr);
     }

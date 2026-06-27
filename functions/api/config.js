@@ -4,11 +4,13 @@
 // Returns public runtime configuration from Cloudflare Pages environment variables.
 // Set these in the Cloudflare Pages dashboard → Settings → Environment Variables:
 //
-//   WHATSAPP_PHONE  — digits only, no + or spaces (e.g. "15551234567")
-//   BOOKING_URL     — Calendly/Cal.com booking URL
-//   VOICE_PHONE     — Public phone number for inbound voice calls (e.g. "+18001234567")
+//   WHATSAPP_PHONE   — digits only, no + or spaces (e.g. "17656762328")
+//   BOOKING_URL      — Calendly/Cal.com booking URL
+//   VOICE_PHONE      — Public inbound phone number (digits only, e.g. "17656762328")
 //
-// None of these are secrets — they are public-facing contact points.
+// These are public-facing — they are safe to expose to the browser.
+// Secret keys (ANTHROPIC_API_KEY, RESEND_API_KEY, GHL_API_KEY, GHL_WEBHOOK_URL)
+// are never returned here.
 
 const CORS = {
   'Access-Control-Allow-Origin': 'https://carriersfy.ai',
@@ -26,6 +28,7 @@ export async function onRequestGet(context) {
     whatsappPhone: env.WHATSAPP_PHONE || null,
     bookingUrl: env.BOOKING_URL || null,
     voicePhone: env.VOICE_PHONE || null,
+    calendarEnabled: !!(env.BOOKING_URL || env.GHL_CALENDAR_ID),
   };
   return new Response(JSON.stringify(cfg), {
     status: 200,
