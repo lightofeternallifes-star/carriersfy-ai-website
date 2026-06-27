@@ -599,14 +599,6 @@
             <label for="cf-industry" style="display:block;font-size:12.5px;font-weight:600;color:rgba(244,246,251,.6);margin-bottom:7px;">Industry</label>
             <select id="cf-industry" name="industry" style="width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;cursor:pointer;" style-focus="border-color:#1FA2FF;">
               <option value="" style="background:#0B0F1C;">Select your industry</option>
-              <option value="marine" style="background:#0B0F1C;">Marine &amp; Boating</option>
-              <option value="signs" style="background:#0B0F1C;">Signs &amp; Print</option>
-              <option value="home" style="background:#0B0F1C;">Home Services</option>
-              <option value="healthcare" style="background:#0B0F1C;">Healthcare &amp; Clinics</option>
-              <option value="realestate" style="background:#0B0F1C;">Real Estate</option>
-              <option value="automotive" style="background:#0B0F1C;">Automotive</option>
-              <option value="professional" style="background:#0B0F1C;">Professional Services</option>
-              <option value="retail" style="background:#0B0F1C;">Retail &amp; E-commerce</option>
             </select>
           </div>
           <div>
@@ -806,40 +798,34 @@ class Component extends DCLogic {
     return modal;
   }
 
-  async loadSophiaWebsiteConfig() {
-    if (this._sophiaWebsiteConfig) return this._sophiaWebsiteConfig;
-    const cfg = {
-      phonePlaceholder: 'CARRIERSFY_WHATSAPP_PHONE',
-      defaultMessage: 'Hi Sophia, I want to build an AI employee or AI app for my business.',
-      urlTemplate: 'https://wa.me/{CARRIERSFY_WHATSAPP_PHONE}?text={ENCODED_MESSAGE}',
-    };
-    try {
-      const res = await fetch('config/sophia.config.ts', { cache: 'no-store' });
-      if (res.ok) {
-        const text = await res.text();
-        const phone = text.match(/phonePlaceholder:\s*"([^"]+)"/);
-        const msg = text.match(/defaultMessage:\s*"([^"]+)"/);
-        const url = text.match(/urlTemplate:\s*"([^"]+)"/);
-        if (phone) cfg.phonePlaceholder = phone[1];
-        if (msg) cfg.defaultMessage = msg[1];
-        if (url) cfg.urlTemplate = url[1];
-      }
-    } catch (err) {
-      console.warn('[Sophia] Config fetch unavailable; using configured placeholders.', err);
-    }
-    this._sophiaWebsiteConfig = cfg;
-    return cfg;
-  }
-
   async updateSophiaWhatsAppLink() {
     const link = document.getElementById('cf-sophia-whatsapp');
     if (!link) return;
-    const cfg = await this.loadSophiaWebsiteConfig();
-    const runtimePhone = window.CF_SOPHIA_WHATSAPP_PHONE || cfg.phonePlaceholder;
-    const href = cfg.urlTemplate
-      .replace('{CARRIERSFY_WHATSAPP_PHONE}', encodeURIComponent(runtimePhone))
-      .replace('{ENCODED_MESSAGE}', encodeURIComponent(cfg.defaultMessage));
-    link.setAttribute('href', href);
+    // Resolve phone from global set by sophia-channels.js, or fetch /api/config directly
+    let phone = (window.CF_SOPHIA_CONFIG && window.CF_SOPHIA_CONFIG.whatsappPhone)
+              || window.CF_SOPHIA_WHATSAPP_PHONE
+              || null;
+    if (!phone) {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.whatsappPhone) {
+            phone = data.whatsappPhone;
+            window.CF_SOPHIA_WHATSAPP_PHONE = phone;
+          }
+        }
+      } catch (_) {}
+    }
+    if (!phone) {
+      link.style.opacity = '0.35';
+      link.style.pointerEvents = 'none';
+      return;
+    }
+    const message = 'Hi! I want to learn more about Carriersfy AI Digital Employees.';
+    link.setAttribute('href', 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message));
+    link.style.opacity = '';
+    link.style.pointerEvents = '';
     link.setAttribute('aria-label', 'Start WhatsApp chat with Sophia');
   }
 
@@ -1214,5 +1200,6 @@ class Component extends DCLogic {
 <script src="/sophia-chat.js" defer></script>
 <script src="/sophia-voice.js" defer></script>
 <script src="/sophia-channels.js" defer></script>
+<script src="/industry-selector.js" defer></script>
 </body>
 </html>
