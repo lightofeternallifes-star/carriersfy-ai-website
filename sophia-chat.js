@@ -777,19 +777,24 @@
   }
 
   function observeForModal() {
+    var _patchTimer = null;
     var observer = new MutationObserver(function (mutations) {
       for (var i = 0; i < mutations.length; i++) {
         var added = mutations[i].addedNodes;
         for (var j = 0; j < added.length; j++) {
           var node = added[j];
-          if (node.id === 'cf-sophia-modal' || (node.querySelector && node.querySelector('#cf-sophia-dialog'))) {
-            setTimeout(patchSophiaModal, 50);
+          if (node.nodeType === 1 && (node.id === 'cf-sophia-modal' || (node.querySelector && node.querySelector('#cf-sophia-dialog')))) {
+            clearTimeout(_patchTimer);
+            _patchTimer = setTimeout(patchSophiaModal, 50);
           }
         }
       }
-      if (document.getElementById('cf-sophia-dialog') && !state.initialized) {
-        setTimeout(patchSophiaModal, 50);
-      }
+      // Removed: broad fallback that called setTimeout(patchSophiaModal) on every DOM
+      // mutation when the dialog existed. buildSelect() adds ~47 nodes per language
+      // switch, queuing 47 simultaneous patchSophiaModal calls. The second call runs
+      // while the first is between dialog.appendChild(chatZone) and
+      // state.initialized = true, finds chatZone via querySelector, and the
+      // replaceChild on a mid-construction subtree throws removeChild NOT_FOUND_ERR.
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }

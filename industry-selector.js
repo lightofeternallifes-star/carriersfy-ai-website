@@ -1,258 +1,177 @@
 // industry-selector.js — Dynamic industry selector (EN/ES/PT).
 //
-// ROOT CAUSE FIX (regression from v1.1):
-//   The original implementation used sel.innerHTML = '' to rebuild the <select>
-//   on every language change. The DC/support.js React runtime also owns that
-//   <select> and reconciles its children when component state changes (e.g.
-//   mobile menu toggle). When React tried to removeChild() nodes that innerHTML
-//   had already removed, the browser threw:
-//   "The node to be removed is not a child of this node."
-//   React caught the DOM exception and unmounted the component tree → blank page.
+// Design contract with the DC/React runtime:
+//   The DC runtime renders <select id="cf-industry"> once on mount and never
+//   re-renders (the DC component has no setState calls — all interactions are
+//   direct DOM manipulation). React's fiber never reconciles the select's
+//   children after initial mount, so we can safely own those children.
 //
-// FIX: This script never touches the React-owned <select id="cf-industry">.
-//   Instead it hides that element and creates a parallel <select id="cf-industry-ui">
-//   that React has no knowledge of. React reconciles the hidden original safely;
-//   we control the visible custom select with no conflict whatsoever.
+// DOM mutation policy — eliminates all removeChild race conditions:
+//   FIRST CALL  → sel.innerHTML = '' (clears DC's single placeholder) then
+//                 adds all options. Stores element references in _refs.
+//   LATER CALLS → updates option.textContent / optgroup.label in-place.
+//                 ZERO new or removed nodes → body MutationObserver in
+//                 sophia-chat.js is never triggered by language switches.
 
 (function () {
   'use strict';
 
-  // ─── Language detection ───────────────────────────────────────────────────
-  // Reads DC runtime language (document.documentElement.lang → cf_lang → nav).
-
   function getSiteLang() {
-    var docLang = (document.documentElement.lang || '').toLowerCase();
-    if (docLang === 'es' || docLang === 'pt' || docLang === 'en') return docLang;
+    var d = (document.documentElement.lang || '').toLowerCase();
+    if (d === 'es' || d === 'pt' || d === 'en') return d;
     try {
-      var saved = localStorage.getItem('cf_lang');
-      if (saved === 'es' || saved === 'pt' || saved === 'en') return saved;
+      var s = localStorage.getItem('cf_lang');
+      if (s === 'es' || s === 'pt' || s === 'en') return s;
     } catch (_) {}
-    var nav = (navigator.language || 'en').toLowerCase();
-    if (nav.startsWith('pt')) return 'pt';
-    if (nav.startsWith('es')) return 'es';
+    var n = (navigator.language || 'en').toLowerCase();
+    if (n.startsWith('pt')) return 'pt';
+    if (n.startsWith('es')) return 'es';
     return 'en';
   }
 
-  // ─── Data ─────────────────────────────────────────────────────────────────
+  // ─── Industry data ────────────────────────────────────────────────────────
+  // type:'option'  → flat <option>
+  // type:'optgroup' → <optgroup> with nested options array
 
-  var INDUSTRIES = [
+  var ITEMS = [
+    { type: 'option',   value: 'dental-labs',    en: '🏥 Dental Labs',           es: '🏥 Laboratorios Dentales',           pt: '🏥 Laboratórios Dentários' },
+    { type: 'option',   value: 'dental-clinics',  en: '🦷 Dental Clinics',         es: '🦷 Clínicas Dentales',               pt: '🦷 Clínicas Dentárias' },
+    { type: 'option',   value: 'medical',          en: '🏥 Medical Clinics',        es: '🏥 Clínicas Médicas',                pt: '🏥 Clínicas Médicas' },
+    { type: 'option',   value: 'veterinary',       en: '🐶 Veterinary Clinics',     es: '🐶 Clínicas Veterinarias',           pt: '🐶 Clínicas Veterinárias' },
+    { type: 'option',   value: 'lawfirm',          en: '⚖️ Law Firms',              es: '⚖️ Firmas de Abogados',              pt: '⚖️ Escritórios de Advocacia' },
     {
-      group: { en: '🏥 HEALTHCARE', es: '🏥 SALUD', pt: '🏥 SAÚDE' },
+      type: 'optgroup', value: 'real-estate',
+      en: '🏡 Real Estate',  es: '🏡 Bienes Raíces',  pt: '🏡 Imóveis',
       options: [
-        { value: 'dental',        en: 'Dental Clinics',        es: 'Clínicas Dentales',          pt: 'Clínicas Dentárias' },
-        { value: 'medical',       en: 'Medical Clinics',       es: 'Clínicas Médicas',           pt: 'Clínicas Médicas' },
-        { value: 'veterinary',    en: 'Veterinary Clinics',    es: 'Clínicas Veterinarias',      pt: 'Clínicas Veterinárias' },
-        { value: 'chiropractic',  en: 'Chiropractic Clinics',  es: 'Quiroprácticos',             pt: 'Clínicas de Quiropraxia' },
-        { value: 'medspa',        en: 'Med Spa & Aesthetics',  es: 'Med Spa & Estética',         pt: 'Med Spa & Estética' },
+        { value: 'realtors',      en: 'Realtors',             es: 'Agentes Inmobiliarios',        pt: 'Corretores de Imóveis' },
+        { value: 'property-mgmt', en: 'Property Management',  es: 'Administración de Propiedades', pt: 'Administração de Imóveis' },
+        { value: 'lenders',       en: 'Lenders',              es: 'Prestamistas',                 pt: 'Financiadoras' },
       ],
     },
+    { type: 'option',   value: 'trucking',         en: '🚛 Trucking Companies',     es: '🚛 Empresas de Transporte',          pt: '🚛 Transportadoras' },
+    { type: 'option',   value: 'truck-parts',      en: '🔧 Truck Parts',            es: '🔧 Refacciones para Camión',         pt: '🔧 Peças para Caminhão' },
+    { type: 'option',   value: 'electrician',      en: '⚡ Electricians',           es: '⚡ Electricistas',                   pt: '⚡ Eletricistas' },
+    { type: 'option',   value: 'plumbing',         en: '🚰 Plumbers',               es: '🚰 Plomeros',                        pt: '🚰 Encanadores' },
+    { type: 'option',   value: 'hvac',             en: '❄️ HVAC / A/C Companies',  es: '❄️ Empresas de A/C',                pt: '❄️ Empresas de Ar-condicionado' },
     {
-      group: { en: '⚖️ LEGAL & FINANCIAL', es: '⚖️ LEGAL Y FINANCIERO', pt: '⚖️ JURÍDICO E FINANCEIRO' },
+      type: 'optgroup', value: 'cleaning',
+      en: '🧹 Cleaning Companies',  es: '🧹 Empresas de Limpieza',  pt: '🧹 Empresas de Limpeza',
       options: [
-        { value: 'lawfirm',       en: 'Law Firms',             es: 'Firmas de Abogados',         pt: 'Escritórios de Advocacia' },
-        { value: 'immigration',   en: 'Immigration Services',  es: 'Servicios de Inmigración',   pt: 'Serviços de Imigração' },
-        { value: 'accounting',    en: 'Accounting & Tax',      es: 'Contabilidad & Impuestos',   pt: 'Contabilidade & Impostos' },
-        { value: 'creditrepair',  en: 'Credit Repair',         es: 'Reparación de Crédito',      pt: 'Reparo de Crédito' },
-        { value: 'mortgage',      en: 'Mortgage Lenders',      es: 'Prestamistas Hipotecarios',  pt: 'Financiadoras Imobiliárias' },
+        { value: 'cleaning-res',  en: 'Residential', es: 'Residencial', pt: 'Residencial' },
+        { value: 'cleaning-com',  en: 'Commercial',  es: 'Comercial',   pt: 'Comercial' },
       ],
     },
-    {
-      group: { en: '🏡 REAL ESTATE', es: '🏡 BIENES RAÍCES', pt: '🏡 IMÓVEIS' },
-      options: [
-        { value: 'realtor',            en: 'Realtors',            es: 'Agentes Inmobiliarios',        pt: 'Corretores de Imóveis' },
-        { value: 'propertymanagement', en: 'Property Management', es: 'Administración de Propiedades', pt: 'Administração de Imóveis' },
-        { value: 'lenders',            en: 'Lenders',             es: 'Prestamistas',                 pt: 'Financiadoras' },
-      ],
-    },
-    {
-      group: { en: '🍽 FOOD & HOSPITALITY', es: '🍽 GASTRONOMÍA Y HOSPITALIDAD', pt: '🍽 ALIMENTAÇÃO E HOSPITALIDADE' },
-      options: [
-        { value: 'restaurant', en: 'Restaurants', es: 'Restaurantes', pt: 'Restaurantes' },
-        { value: 'cafe',       en: 'Cafés',        es: 'Cafeterías',   pt: 'Cafés' },
-        { value: 'foodtruck',  en: 'Food Trucks',  es: 'Food Trucks',  pt: 'Food Trucks' },
-      ],
-    },
-    {
-      group: { en: '🚚 TRUCKING', es: '🚚 TRANSPORTE', pt: '🚚 TRANSPORTE' },
-      options: [
-        { value: 'trucking',     en: 'Trucking Companies',  es: 'Empresas de Camiones',  pt: 'Transportadoras' },
-        { value: 'dispatch',     en: 'Dispatch Companies',  es: 'Empresas de Despacho',  pt: 'Empresas de Despacho' },
-        { value: 'truckparts',   en: 'Truck Parts',         es: 'Refacciones de Camión', pt: 'Peças para Caminhão' },
-        { value: 'dieselrepair', en: 'Diesel Repair Shops', es: 'Talleres Diésel',       pt: 'Oficinas de Diesel' },
-      ],
-    },
-    {
-      group: { en: '🏠 HOME SERVICES', es: '🏠 SERVICIOS DEL HOGAR', pt: '🏠 SERVIÇOS RESIDENCIAIS' },
-      options: [
-        { value: 'cleaning',    en: 'Cleaning Companies',      es: 'Empresas de Limpieza',       pt: 'Empresas de Limpeza' },
-        { value: 'electrician', en: 'Electricians',            es: 'Electricistas',              pt: 'Eletricistas' },
-        { value: 'plumbing',    en: 'Plumbers',                es: 'Plomeros',                   pt: 'Encanadores' },
-        { value: 'hvac',        en: 'HVAC / Air Conditioning', es: 'HVAC / Aire Acondicionado',  pt: 'HVAC / Ar-condicionado' },
-        { value: 'roofing',     en: 'Roofing Companies',       es: 'Empresas de Techos',         pt: 'Empresas de Telhados' },
-        { value: 'landscaping', en: 'Landscaping',             es: 'Jardinería',                 pt: 'Jardinagem' },
-        { value: 'handyman',    en: 'Handyman Services',       es: 'Servicios de Mantenimiento', pt: 'Serviços de Manutenção' },
-      ],
-    },
-    {
-      group: { en: '🏗 CONSTRUCTION', es: '🏗 CONSTRUCCIÓN', pt: '🏗 CONSTRUÇÃO' },
-      options: [
-        { value: 'generalcontractor', en: 'General Contractors', es: 'Contratistas Generales', pt: 'Empreiteiras Gerais' },
-        { value: 'remodeling',        en: 'Remodeling',          es: 'Remodelación',           pt: 'Reformas' },
-        { value: 'concrete',          en: 'Concrete',            es: 'Concreto',               pt: 'Concreto' },
-        { value: 'roofing-const',     en: 'Roofing',             es: 'Techos',                 pt: 'Telhados' },
-      ],
-    },
-    {
-      group: { en: '🚗 AUTOMOTIVE', es: '🚗 AUTOMOTRIZ', pt: '🚗 AUTOMOTIVO' },
-      options: [
-        { value: 'autorepair',    en: 'Auto Repair',     es: 'Talleres Mecánicos',      pt: 'Oficinas Mecânicas' },
-        { value: 'bodyshop',      en: 'Body Shops',      es: 'Hojalatería y Pintura',   pt: 'Funilaria e Pintura' },
-        { value: 'cardealership', en: 'Car Dealerships', es: 'Concesionarias de Autos', pt: 'Concessionárias' },
-        { value: 'carwash',       en: 'Car Wash',        es: 'Lavado de Autos',         pt: 'Lava-rápido' },
-      ],
-    },
-    {
-      group: { en: '🖨 PRINTING & SIGNS', es: '🖨 IMPRESIÓN Y SEÑALIZACIÓN', pt: '🖨 IMPRESSÃO E COMUNICAÇÃO VISUAL' },
-      options: [
-        { value: 'signsprint',         en: 'Signs & Printing',    es: 'Rótulos & Imprenta',    pt: 'Placas & Gráfica' },
-        { value: 'vehiclewraps',       en: 'Vehicle Wraps',       es: 'Rotulado de Vehículos', pt: 'Envelopamento de Veículos' },
-        { value: 'commercialgraphics', en: 'Commercial Graphics', es: 'Gráfica Comercial',     pt: 'Comunicação Visual' },
-      ],
-    },
-    {
-      group: { en: '⚓ MARINE', es: '⚓ MARÍTIMO', pt: '⚓ NÁUTICO' },
-      options: [
-        { value: 'marineelectronics', en: 'Marine Electronics', es: 'Electrónica Marina', pt: 'Eletrônica Náutica' },
-        { value: 'boatservices',      en: 'Boat Services',      es: 'Servicios Náuticos', pt: 'Serviços Náuticos' },
-      ],
-    },
-    {
-      group: { en: '🏢 PROFESSIONAL SERVICES', es: '🏢 SERVICIOS PROFESIONALES', pt: '🏢 SERVIÇOS PROFISSIONAIS' },
-      options: [
-        { value: 'consulting', en: 'Consulting',         es: 'Consultoría',               pt: 'Consultoria' },
-        { value: 'marketing',  en: 'Marketing Agencies', es: 'Agencias de Marketing',     pt: 'Agências de Marketing' },
-        { value: 'insurance',  en: 'Insurance Agencies', es: 'Agencias de Seguros',       pt: 'Seguradoras' },
-        { value: 'staffing',   en: 'Staffing Companies', es: 'Empresas de Reclutamiento', pt: 'Empresas de Recrutamento' },
-      ],
-    },
-    {
-      group: { en: '🛍 RETAIL', es: '🛍 COMERCIO', pt: '🛍 VAREJO' },
-      options: [
-        { value: 'retail',        en: 'Retail Stores', es: 'Tiendas Minoristas', pt: 'Lojas de Varejo' },
-        { value: 'wholesale',     en: 'Wholesale',     es: 'Mayoreo',            pt: 'Atacado' },
-        { value: 'manufacturing', en: 'Manufacturing', es: 'Manufactura',        pt: 'Manufatura' },
-      ],
-    },
-    {
-      group: null,
-      options: [
-        { value: 'other', en: 'Other Business', es: 'Otro Negocio', pt: 'Outro Negócio' },
-      ],
-    },
+    { type: 'option',   value: 'signs-print',      en: '🖨 Signs & Printing',       es: '🖨 Rótulos & Impresión',             pt: '🖨 Placas & Gráfica' },
+    { type: 'option',   value: 'marine',            en: '⚓ Marine',                 es: '⚓ Náutico',                          pt: '⚓ Náutico' },
+    { type: 'option',   value: 'restaurant',        en: '🍽 Restaurants',            es: '🍽 Restaurantes',                    pt: '🍽 Restaurantes' },
+    { type: 'option',   value: 'cafe',              en: '☕ Cafés',                  es: '☕ Cafeterías',                       pt: '☕ Cafés' },
+    { type: 'option',   value: 'automotive',        en: '🚗 Automotive',             es: '🚗 Automotriz',                      pt: '🚗 Automotivo' },
+    { type: 'option',   value: 'insurance',         en: '🛡 Insurance Agencies',     es: '🛡 Agencias de Seguros',             pt: '🛡 Seguradoras' },
+    { type: 'option',   value: 'marketing',         en: '📈 Marketing Agencies',     es: '📈 Agencias de Marketing',           pt: '📈 Agências de Marketing' },
+    { type: 'option',   value: 'manufacturing',     en: '🏭 Manufacturing',          es: '🏭 Manufactura',                     pt: '🏭 Manufatura' },
+    { type: 'option',   value: 'retail',            en: '🏬 Retail',                 es: '🏬 Comercio',                        pt: '🏬 Varejo' },
   ];
 
-  var PLACEHOLDER = {
-    en: 'Select your industry',
-    es: 'Selecciona tu industria',
-    pt: 'Selecione seu setor',
-  };
+  var PLACEHOLDER = { en: 'Select your industry', es: 'Selecciona tu industria', pt: 'Selecione seu setor' };
+  var LABEL_STR   = { en: 'Industry',             es: 'Industria',               pt: 'Setor' };
 
-  var LABEL = {
-    en: 'Industry',
-    es: 'Industria',
-    pt: 'Setor',
-  };
+  // ─── Build-once refs ──────────────────────────────────────────────────────
 
-  // ─── Custom select (React-free) ───────────────────────────────────────────
-  // _customSel is created by this script and never touched by the DC/React runtime.
-  // innerHTML = '' is safe here — React has no fiber reference to this element.
+  var _built       = false;
+  var _placeholderEl = null;
+  var _labelTextNode = null;
+  var _refs          = [];   // [{type, el, item, subrefs?}]
 
-  var _customSel = null;
+  // ─── First build: structural DOM change (only called once) ────────────────
 
-  function buildSelect(lang) {
-    if (!_customSel) return;
+  function buildFull(sel, lang) {
+    sel.innerHTML = '';  // removes DC's single placeholder option
 
-    var currentVal = _customSel.value;
+    _placeholderEl = document.createElement('option');
+    _placeholderEl.value = '';
+    _placeholderEl.style.background = '#0B0F1C';
+    _placeholderEl.textContent = PLACEHOLDER[lang] || PLACEHOLDER.en;
+    sel.appendChild(_placeholderEl);
 
-    // Safe to use innerHTML here — React does not own _customSel
-    _customSel.innerHTML = '';
+    _refs = [];
 
-    var ph = document.createElement('option');
-    ph.value = '';
-    ph.style.background = '#0B0F1C';
-    ph.textContent = PLACEHOLDER[lang] || PLACEHOLDER.en;
-    _customSel.appendChild(ph);
-
-    INDUSTRIES.forEach(function (cat) {
-      var container;
-      if (cat.group) {
-        container = document.createElement('optgroup');
-        container.label = cat.group[lang] || cat.group.en;
-        _customSel.appendChild(container);
-      } else {
-        container = _customSel;
-      }
-      cat.options.forEach(function (opt) {
+    ITEMS.forEach(function (item) {
+      if (item.type === 'option') {
         var o = document.createElement('option');
-        o.value = opt.value;
+        o.value = item.value;
         o.style.background = '#0B0F1C';
-        o.textContent = opt[lang] || opt.en;
-        container.appendChild(o);
-      });
+        o.textContent = item[lang] || item.en;
+        sel.appendChild(o);
+        _refs.push({ type: 'option', el: o, item: item });
+      } else {
+        var g = document.createElement('optgroup');
+        g.label = item[lang] || item.en;
+        sel.appendChild(g);
+        var subrefs = [];
+        (item.options || []).forEach(function (sub) {
+          var so = document.createElement('option');
+          so.value = sub.value;
+          so.style.background = '#0B0F1C';
+          so.textContent = sub[lang] || sub.en;
+          g.appendChild(so);
+          subrefs.push({ el: so, item: sub });
+        });
+        _refs.push({ type: 'optgroup', el: g, item: item, subrefs: subrefs });
+      }
     });
 
-    if (currentVal) _customSel.value = currentVal;
+    _built = true;
+  }
 
-    // Update the label text using nodeValue (same mechanism as DC runtime) to
-    // avoid detaching any text node the DC TreeWalker may have registered.
-    var lbl = document.querySelector('label[for="cf-industry"]');
-    if (lbl) {
-      var txt = lbl.firstChild;
-      if (txt && txt.nodeType === 3) {
-        txt.nodeValue = LABEL[lang] || LABEL.en;
+  // ─── Subsequent updates: text-only, zero childList mutations ─────────────
+
+  function updateText(lang) {
+    if (_placeholderEl) _placeholderEl.textContent = PLACEHOLDER[lang] || PLACEHOLDER.en;
+    _refs.forEach(function (ref) {
+      if (ref.type === 'option') {
+        ref.el.textContent = ref.item[lang] || ref.item.en;
       } else {
-        lbl.textContent = LABEL[lang] || LABEL.en;
+        ref.el.label = ref.item[lang] || ref.item.en;
+        (ref.subrefs || []).forEach(function (sub) {
+          sub.el.textContent = sub.item[lang] || sub.item.en;
+        });
       }
+    });
+    if (_labelTextNode) {
+      _labelTextNode.nodeValue = LABEL_STR[lang] || LABEL_STR.en;
     }
   }
 
-  // ─── Init ─────────────────────────────────────────────────────────────────
+  // ─── Public entry ─────────────────────────────────────────────────────────
+
+  function buildSelect(lang) {
+    var sel = document.getElementById('cf-industry');
+    if (!sel) return;
+    var saved = sel.value;
+    if (!_built) {
+      buildFull(sel, lang);
+    } else {
+      updateText(lang);
+    }
+    if (saved) {
+      try { sel.value = saved; } catch (_) {}
+    }
+  }
 
   function init() {
-    var origSel = document.getElementById('cf-industry');
-    if (!origSel) return;
+    var sel = document.getElementById('cf-industry');
+    if (!sel) return;
 
-    // Create a new <select> that this script fully owns.
-    // The React runtime (support.js) has no fiber node for this element —
-    // it will never try to reconcile or removeChild from it.
-    _customSel = document.createElement('select');
-    _customSel.id = 'cf-industry-ui';
-    _customSel.name = 'industry';
+    // Cache the DC-registered label text node so we can update via nodeValue
+    // (same mechanism the DC runtime uses) rather than textContent, which would
+    // detach the original text node from _i18nNodes.
+    var lbl = document.querySelector('label[for="cf-industry"]');
+    if (lbl && lbl.firstChild && lbl.firstChild.nodeType === 3) {
+      _labelTextNode = lbl.firstChild;
+    }
 
-    // Copy the inline visual styles from the original
-    var origStyle = origSel.getAttribute('style');
-    if (origStyle) _customSel.setAttribute('style', origStyle);
-
-    // Hide the original — React can reconcile it as much as it wants;
-    // since it has only the placeholder option, React's diff is a no-op.
-    origSel.style.display = 'none';
-
-    // DC runtime applies style-focus via injected CSS classes — our element
-    // was not processed by DC, so replicate focus styling manually.
-    _customSel.addEventListener('focus', function () {
-      _customSel.style.borderColor = '#1FA2FF';
-    });
-    _customSel.addEventListener('blur', function () {
-      _customSel.style.borderColor = 'rgba(255,255,255,.14)';
-    });
-
-    // Insert our custom select immediately after the hidden original
-    origSel.parentNode.insertBefore(_customSel, origSel.nextSibling);
-
-    // Initial build
     buildSelect(getSiteLang());
 
-    // Watch DC runtime language changes
     new MutationObserver(function () {
       buildSelect(getSiteLang());
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
