@@ -851,7 +851,7 @@ class Component extends DCLogic {
       business: (document.getElementById('cf-business')?.value || '').trim(),
       email:    (document.getElementById('cf-email')?.value || '').trim(),
       phone:    (document.getElementById('cf-phone')?.value || '').trim(),
-      industry: (document.getElementById('cf-industry')?.value || ''),
+      industry: (document.getElementById('cf-industry-ui')?.value || document.getElementById('cf-industry')?.value || ''),
       message:  (document.getElementById('cf-message')?.value || '').trim(),
       sophiaPipeline: {
         owner: 'Sophia',
