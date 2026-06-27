@@ -11,8 +11,12 @@
   function getWhatsAppUrl(contextMessage) {
     var phone = window.CF_SOPHIA_WHATSAPP_PHONE || null;
     if (!phone) return null;
-    var msg = contextMessage || "Hi! I'm interested in learning more about Carriersfy AI Digital Employees.";
-    return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+    var defaultMsg = L(
+      "Hi! I'm interested in learning more about Carriersfy AI Digital Employees.",
+      '¡Hola! Me interesa saber más sobre los Empleados Digitales de Carriersfy AI.',
+      'Olá! Tenho interesse em saber mais sobre os Funcionários Digitais da Carriersfy AI.'
+    );
+    return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(contextMessage || defaultMsg);
   }
 
   // ─── Greetings ────────────────────────────────────────────────────────────
@@ -63,10 +67,34 @@
   }
 
   function detectLanguage() {
-    var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-    if (lang.startsWith('pt')) return 'pt';
-    if (lang.startsWith('es')) return 'es';
+    // Priority 1: DC runtime sets document.documentElement.lang when language is changed
+    var docLang = (document.documentElement.lang || '').toLowerCase();
+    if (docLang === 'es' || docLang === 'pt' || docLang === 'en') return docLang;
+    // Priority 2: DC runtime persists selection in localStorage with key 'cf_lang'
+    try {
+      var saved = localStorage.getItem('cf_lang');
+      if (saved === 'es' || saved === 'pt' || saved === 'en') return saved;
+    } catch (_) {}
+    // Fallback: browser language (least reliable for multi-language sites)
+    var nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    if (nav.startsWith('pt')) return 'pt';
+    if (nav.startsWith('es')) return 'es';
     return 'en';
+  }
+
+  // Watches the DC runtime for language changes and keeps state.language in sync.
+  // The DC runtime updates document.documentElement.lang via its applyLang() method.
+  function watchLanguageChanges() {
+    var observer = new MutationObserver(function () {
+      var newLang = (document.documentElement.lang || '').toLowerCase();
+      if ((newLang === 'en' || newLang === 'es' || newLang === 'pt') && newLang !== state.language) {
+        state.language = newLang;
+        // Update textarea placeholder to match new language
+        var inp = document.getElementById('cf-sc-input');
+        if (inp) inp.placeholder = L('Type your message...', 'Escribe tu mensaje...', 'Escreva sua mensagem...');
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   }
 
   function $(id) { return document.getElementById(id); }
@@ -767,6 +795,9 @@
   }
 
   function init() {
+    // Start watching for DC runtime language changes immediately
+    watchLanguageChanges();
+
     // Patch any static WhatsApp link immediately
     var waLink = document.getElementById('cf-sophia-whatsapp');
     if (waLink) {

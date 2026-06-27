@@ -32,9 +32,17 @@
   };
 
   function detectLang() {
-    var l = (navigator.language || 'en').toLowerCase();
-    if (l.startsWith('pt')) return 'pt';
-    if (l.startsWith('es')) return 'es';
+    // Priority 1: DC runtime sets document.documentElement.lang on language change
+    var docLang = (document.documentElement.lang || '').toLowerCase();
+    if (docLang === 'es' || docLang === 'pt' || docLang === 'en') return docLang;
+    // Priority 2: DC runtime persists the selection in localStorage as 'cf_lang'
+    try {
+      var saved = localStorage.getItem('cf_lang');
+      if (saved === 'es' || saved === 'pt' || saved === 'en') return saved;
+    } catch (_) {}
+    var nav = (navigator.language || 'en').toLowerCase();
+    if (nav.startsWith('pt')) return 'pt';
+    if (nav.startsWith('es')) return 'es';
     return 'en';
   }
 
@@ -346,6 +354,14 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && state.open) closeModal();
     });
+    // Watch DC runtime language changes (updates state.lang for the next modal open)
+    var langObserver = new MutationObserver(function () {
+      var newLang = (document.documentElement.lang || '').toLowerCase();
+      if (newLang === 'en' || newLang === 'es' || newLang === 'pt') {
+        state.lang = newLang;
+      }
+    });
+    langObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   }
 
   if (document.readyState === 'loading') {

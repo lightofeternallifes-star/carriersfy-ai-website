@@ -228,6 +228,13 @@ export async function onRequestPost(context) {
   const message = (body.message || '').trim();
   if (!message) return json({ error: 'message is required' }, 400);
 
+  // Language enforcement — appended to system prompt to guarantee correct output language.
+  // The visitor's selected language is sent explicitly from the frontend (not auto-detected).
+  const langParam = (body.language || 'en').toLowerCase();
+  const LANG_NAMES = { en: 'English', es: 'Spanish', pt: 'Portuguese' };
+  const langName = LANG_NAMES[langParam] || 'English';
+  const LANG_ENFORCE = `\n\n═══════════════════════════════════════════════\nLANGUAGE ENFORCEMENT — ABSOLUTE RULE\n═══════════════════════════════════════════════\nThe visitor is currently using the ${langName} version of this website.\nYou MUST respond EXCLUSIVELY in ${langName}.\nThis overrides everything else. Do NOT respond in any other language.\nDo NOT mix languages. Do NOT translate phrases into another language.\nEvery word of your response must be in ${langName}.`;
+
   // Build conversation history (last 8 turns for better qualification context)
   const rawHistory = Array.isArray(body.history) ? body.history : [];
   const history = rawHistory
@@ -250,7 +257,7 @@ export async function onRequestPost(context) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
         temperature: 0.72,
-        system: SOPHIA_SYSTEM_PROMPT,
+        system: SOPHIA_SYSTEM_PROMPT + LANG_ENFORCE,
         messages,
       }),
     });

@@ -3,7 +3,7 @@
 // Configuration is loaded from /api/config (Cloudflare Pages environment variables).
 //
 // To activate these channels, set in Cloudflare Pages → Settings → Environment Variables:
-//   WHATSAPP_PHONE  — digits only, no + or spaces (e.g. "15551234567")
+//   WHATSAPP_PHONE  — digits only, no + or spaces (e.g. "17656762328")
 //   BOOKING_URL     — Calendly or Cal.com URL
 //
 // If not configured, buttons gracefully fall back to the contact form.
@@ -14,11 +14,41 @@
   var cfg = { whatsappPhone: null, bookingUrl: null };
   var initialized = false;
 
-  var WA_DEFAULT_MSG = "Hi Sophia! I found Carriersfy AI and I'd like to learn more about your Digital Employees.";
+  // ─── Language detection ────────────────────────────────────────────────────
+  // Reads the DC runtime's current language (not browser language).
+  // DC stores it in document.documentElement.lang AND localStorage.cf_lang.
+
+  function getSiteLang() {
+    var docLang = (document.documentElement.lang || '').toLowerCase();
+    if (docLang === 'es' || docLang === 'pt' || docLang === 'en') return docLang;
+    try {
+      var saved = localStorage.getItem('cf_lang');
+      if (saved === 'es' || saved === 'pt' || saved === 'en') return saved;
+    } catch (_) {}
+    var nav = (navigator.language || 'en').toLowerCase();
+    if (nav.startsWith('pt')) return 'pt';
+    if (nav.startsWith('es')) return 'es';
+    return 'en';
+  }
+
+  // Returns the correct string for the current site language at call time.
+  function loc(en, es, pt) {
+    var l = getSiteLang();
+    return l === 'es' ? es : l === 'pt' ? pt : en;
+  }
+
+  // WhatsApp default message — localized at click time (not build time)
+  function getWaDefaultMsg() {
+    return loc(
+      "Hi Sophia! I found Carriersfy AI and I'd like to learn more about your Digital Employees.",
+      "¡Hola Sophia! Encontré Carriersfy AI y me gustaría saber más sobre sus Empleados Digitales.",
+      "Olá Sophia! Encontrei a Carriersfy AI e gostaria de saber mais sobre os seus Funcionários Digitais."
+    );
+  }
 
   function getWaUrl() {
     if (!cfg.whatsappPhone) return null;
-    return 'https://wa.me/' + cfg.whatsappPhone + '?text=' + encodeURIComponent(WA_DEFAULT_MSG);
+    return 'https://wa.me/' + cfg.whatsappPhone + '?text=' + encodeURIComponent(getWaDefaultMsg());
   }
 
   // ─── Styles ───────────────────────────────────────────────────────────────
@@ -57,7 +87,11 @@
       bookBtn.href = '#contact';
       bookBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        prefillContact('I\'d like to book a strategy call with the Carriersfy AI team.');
+        prefillContact(loc(
+          "I'd like to book a strategy call with the Carriersfy AI team.",
+          'Me gustaría reservar una llamada estratégica con el equipo de Carriersfy AI.',
+          'Gostaria de agendar uma chamada estratégica com a equipe da Carriersfy AI.'
+        ));
       });
     }
 
@@ -77,7 +111,11 @@
       waBtn.href = '#contact';
       waBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        prefillContact('I prefer to connect via WhatsApp. Please share your WhatsApp number.');
+        prefillContact(loc(
+          'I prefer to connect via WhatsApp. Please share your WhatsApp number so the team can reach me.',
+          'Prefiero comunicarme por WhatsApp. Por favor, contácteme a través de ese canal.',
+          'Prefiro me comunicar pelo WhatsApp. Por favor, entre em contato por esse canal.'
+        ));
       });
     }
 
