@@ -20,20 +20,7 @@
     'Custom Solution'
   ];
 
-  const industries = [
-    'Food & Hospitality',
-    'Healthcare',
-    'Legal',
-    'Faith & Community',
-    'Logistics',
-    'Construction',
-    'Education',
-    'Real Estate',
-    'Professional Services',
-    'Retail',
-    'Enterprise Operations',
-    'Custom Industry'
-  ];
+  const industries = (window.CF_INDUSTRIES || []).map(function (i) { return i.icon + ' ' + i.name.en; });
 
   const targetUsers = [
     'Customers',

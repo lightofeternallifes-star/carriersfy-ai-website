@@ -1,27 +1,7 @@
 (function () {
   const STORAGE_KEY = 'cfDigitalEmployeeFactoryState';
 
-  const industries = [
-    'Dental Clinic',
-    'Medical Practice',
-    'Veterinary Clinic',
-    'Law Firm',
-    'Real Estate',
-    'Insurance',
-    'Immigration',
-    'Tax Office',
-    'Restaurant',
-    'Construction',
-    'Home Services',
-    'Marketing Agency',
-    'Car Dealer',
-    'Church',
-    'Logistics',
-    'Transportation',
-    'Manufacturing',
-    'Accounting',
-    'Custom Business'
-  ];
+  const industries = (window.CF_INDUSTRIES || []).map(function (i) { return i.icon + ' ' + i.name.en; });
 
   const employees = [
     'Receptionist',
@@ -444,7 +424,7 @@
   }
 
   function optionDescription(key, option) {
-    if (key === 'industry') return option === 'Custom Business' ? 'Built around your exact operating model.' : 'Prepares industry-specific intake and service logic.';
+    if (key === 'industry') return 'Prepares industry-specific intake and service logic.';
     if (key === 'employee') return option === 'AI Manager' ? 'Coordinates a broader digital team.' : 'Owns a clear business function from day one.';
     if (key === 'personality') return 'Controls tone, pace, and customer-facing presence.';
     if (key === 'schedule') return option === '24/7' ? 'Always available for customers and teams.' : 'Availability aligned with business operations.';
