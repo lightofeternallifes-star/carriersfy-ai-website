@@ -19,6 +19,11 @@ build/
 .cache/
 .parcel-cache/
 
+# Sofia Knowledge Importer — generated artifacts (rebuild via: cd knowledge && npm run import)
+knowledge/output/knowledge.json
+knowledge/output/search-index.json
+knowledge/output/embeddings.ndjson
+
 # OS artifacts
 .DS_Store
 Thumbs.db
@@ -33,7 +38,9 @@ Thumbs.db
 
 # Cloudflare Wrangler
 .wrangler/
-wrangler.toml
+*/.wrangler/
+# Root-level wrangler.toml only — sofia/wrangler.toml is intentionally tracked
+/wrangler.toml
 
 # Local dev secrets
 .dev.vars
