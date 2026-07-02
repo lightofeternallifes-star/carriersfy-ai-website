@@ -27,6 +27,9 @@
     useElevenLabs: true,   // try ElevenLabs first, flip to false on first failure
   };
 
+  // Unlocked once from a user gesture in openModal(); subsequent async play() calls work without gesture.
+  var audioCtx = null;
+
   var GREETINGS = {
     en: "Hi! I'm Sophia, Carriersfy AI's AI Business Consultant. Just start talking — I'm listening.",
     es: "¡Hola! Soy Sophia, Consultora de IA de Carriersfy AI. Empieza a hablar — te escucho.",
@@ -258,8 +261,15 @@
 
   function stopAudio() {
     if (state.currentAudio) {
-      try { state.currentAudio.pause(); state.currentAudio.src = ''; } catch (_) {}
-      if (state.currentAudio._objectUrl) { URL.revokeObjectURL(state.currentAudio._objectUrl); }
+      try {
+        if (typeof state.currentAudio.stop === 'function') {
+          state.currentAudio.onended = null;  // prevent onended firing after explicit stop
+          state.currentAudio.stop();
+        } else {
+          state.currentAudio.pause(); state.currentAudio.src = '';
+        }
+      } catch (_) {}
+      if (state.currentAudio && state.currentAudio._objectUrl) { URL.revokeObjectURL(state.currentAudio._objectUrl); }
       state.currentAudio = null;
     }
     if (SS) SS.cancel();
@@ -288,8 +298,18 @@
     });
     if (preferred) utt.voice = preferred;
 
-    utt.onend   = function () { state.speaking = false; if (state.open) { setStatus('ready'); if (onDone) onDone(); } };
-    utt.onerror = function () { state.speaking = false; if (state.open) { setStatus('ready'); if (onDone) onDone(); } };
+    // finish() is idempotent — fires exactly once whether via onend, onerror, or the safety timer.
+    // The safety timer recovers the state machine when SS.speak() silently fails (Safari without gesture).
+    var done = false;
+    function finish() {
+      if (done) return; done = true;
+      clearTimeout(safetyTimer);
+      state.speaking = false;
+      if (state.open) { setStatus('ready'); if (onDone) onDone(); }
+    }
+    var safetyTimer = setTimeout(finish, Math.max(2000, Math.min(text.length * 60, 15000)));
+    utt.onend   = finish;
+    utt.onerror = finish;
     SS.speak(utt);
   }
 
@@ -308,35 +328,30 @@
     })
       .then(function (res) {
         if (!res.ok) throw new Error('tts unavailable');
-        return res.blob();
+        return res.arrayBuffer();
       })
-      .then(function (blob) {
-        var url   = URL.createObjectURL(blob);
-        var audio = new Audio(url);
-        audio._objectUrl = url;
-        state.currentAudio = audio;
-        audio.onended = function () {
-          URL.revokeObjectURL(url);
+      .then(function (buffer) {
+        // audioCtx was unlocked in openModal() within the user gesture — no autoplay restriction.
+        // arrayBuffer avoids blob: URL entirely — no CSP media-src issue, no onerror+catch race.
+        if (!audioCtx) throw new Error('no audio context');
+        return new Promise(function (resolve, reject) {
+          audioCtx.decodeAudioData(buffer, resolve, reject);
+        });
+      })
+      .then(function (decoded) {
+        var source = audioCtx.createBufferSource();
+        source.buffer = decoded;
+        source.connect(audioCtx.destination);
+        state.currentAudio = source;
+        source.onended = function () {
           state.currentAudio = null;
           state.speaking = false;
           if (state.open) { setStatus('ready'); if (onDone) onDone(); }
         };
-        audio.onerror = function () {
-          URL.revokeObjectURL(url);
-          state.currentAudio = null;
-          // ElevenLabs failed mid-stream — fall back to browser for this and future utterances
-          state.useElevenLabs = false;
-          state.speaking = false;
-          browserSpeak(text, onDone);
-        };
-        audio.play().catch(function () {
-          state.useElevenLabs = false;
-          state.speaking = false;
-          browserSpeak(text, onDone);
-        });
+        source.start(0);
       })
       .catch(function () {
-        // ElevenLabs not configured or failed — switch to browser permanently for this session
+        // ElevenLabs unavailable, audio context missing, or decode failed — use browser TTS
         state.useElevenLabs = false;
         state.speaking = false;
         browserSpeak(text, onDone);
@@ -444,6 +459,14 @@
     state.open    = true;
     state.history = [];
     state.sessionId = loadVoiceSession();
+
+    // Create and unlock Web Audio API context synchronously within this user-gesture frame.
+    // Once resumed here, audioCtx.createBufferSource().start() works from any async callback.
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) {}
+    }
+    if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume().catch(function () {}); }
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
