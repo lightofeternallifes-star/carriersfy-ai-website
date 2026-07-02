@@ -1,0 +1,36 @@
+import type { ImportConfig } from './types.js'
+
+export const IMPORT_CONFIG: ImportConfig = {
+  // Root of the knowledge/ directory — resolved relative to importer/
+  inputPaths: ['.'],
+  outputDir: 'output',
+  maxChunkSize: 1500,
+  minChunkSize: 100,
+  fileExtensions: ['.md'],
+  sections: [
+    'Company',
+    'Mission',
+    'Vision',
+    'Services',
+    'Industries',
+    'Pricing',
+    'FAQs',
+    'Objection Handling',
+    'Digital Employees',
+    'Phone Calls',
+    'WhatsApp',
+    'CRM',
+    'Scheduling',
+    'Case Studies',
+    'Light of Life',
+    'Policies',
+    'Transfer Rules',
+    'Emergency Responses',
+    'Community Resources',
+    'Sales',
+    'General',
+  ],
+  generateEmbeddings: false,
+  version: '1.2.0',
+  changelog: 'Sales Engine V1.2 — added Sophia identity, PROJECT FORGE, Digital Employee Registry, Founding policies (11_sophia_identity.md)',
+}

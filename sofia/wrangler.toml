@@ -1,0 +1,74 @@
+name = "sofia-runtime"
+main = "src/api/index.ts"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── KV Namespaces ─────────────────────────────────────────────────────────────
+# Provisioned 2026-07-01 via Cloudflare MCP
+
+[[kv_namespaces]]
+binding = "SOFIA_KNOWLEDGE"
+id = "ec9acd84672a4b7b8813d8a7dca0d168"
+
+[[kv_namespaces]]
+binding = "SOFIA_SESSIONS"
+id = "14e7dd28145b47e696aa3cf690e4e71c"
+
+[[kv_namespaces]]
+binding = "SOFIA_RATE_LIMITS"
+id = "f64ceec392704fd7a8298300c1d2b9e7"
+
+# ── D1 Database ───────────────────────────────────────────────────────────────
+# Provisioned 2026-07-01 — region: WNAM
+# Schema applied: conversations table + session + contact indexes
+
+[[d1_databases]]
+binding = "sofia_conversations"
+database_name = "sofia_conversations"
+database_id = "d84dc527-aed3-4f2e-9d9a-b366fc2e11a4"
+
+# ── Vectorize ─────────────────────────────────────────────────────────────────
+# Provisioned 2026-07-01 — 1536 dimensions, cosine metric
+
+[[vectorize]]
+binding = "SOFIA_VECTORS"
+index_name = "sofia-knowledge-vectors"
+
+# ── Environment Variables (non-secret) ────────────────────────────────────────
+[vars]
+SOFIA_ENV = "production"
+KNOWLEDGE_VERSION = "1.2.0"
+# GHL webhook receive URL — plain endpoint, not a credential (matches CF Pages plain_text var)
+GHL_WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/UXymvK0RPNvxAukFreXr/webhook-trigger/ede18c67-b8a6-4040-b061-028d5ae6708c"
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# Set via: wrangler secret put <SECRET_NAME>
+# NEVER place secret values in this file.
+#
+# Required secrets (Worker will refuse to start without these):
+#   RESEND_API_KEY
+#   GHL_API_KEY
+#   GHL_LOCATION_ID
+#   SOFIA_API_KEY
+#   SOFIA_WEBHOOK_SECRET
+#   ANTHROPIC_API_KEY
+#   OPENAI_API_KEY
+#   ELEVENLABS_API_KEY
+#   ELEVENLABS_VOICE_ID
+#
+# Optional secrets (features degrade gracefully if absent):
+#   GHL_CALENDAR_ID
+#   GHL_PIPELINE_ID
+#   WHATSAPP_ACCESS_TOKEN
+#   WHATSAPP_PHONE_NUMBER_ID
+#   WHATSAPP_VERIFY_TOKEN
+
+# ── Staging Environment ───────────────────────────────────────────────────────
+[env.staging]
+name = "sofia-runtime-staging"
+vars = { SOFIA_ENV = "staging", KNOWLEDGE_VERSION = "1.1.0" }
+
+# Staging uses separate KV/D1 namespaces — provision and fill in IDs when ready:
+# [[env.staging.kv_namespaces]]
+# binding = "SOFIA_KNOWLEDGE"
+# id = "<staging-kv-id>"

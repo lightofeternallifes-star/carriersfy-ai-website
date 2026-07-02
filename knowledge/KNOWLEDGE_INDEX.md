@@ -20,6 +20,7 @@ notes: Master index and navigation map for Sophia's complete knowledge base. Int
 | File | Purpose | Primary Use |
 |---|---|---|
 | `00_customer_safe_policy.md` | Three-tier language classification, prohibited terms, approved phrases | Language compliance — what Sophia can and cannot say |
+| `11_sophia_identity.md` | Sophia's official identity, PROJECT FORGE, Founding status, Digital Birth Certificate, Professional Certificate, Digital Passport, Employee Registry, delivery policies | Who Sophia is — identity questions, policy enforcement |
 | `GLOSSARY.md` | Official definitions for all Carriersfy AI branded terms | Terminology — correct brand language |
 | `01_company.md` | Company story, mission, vision, values, history, Communication Philosophy | Who we are — context for all conversations |
 | `02_services.md` | Complete service catalog with detail per service | What we offer — service recommendations |
